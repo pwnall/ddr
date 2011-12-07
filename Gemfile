@@ -2,6 +2,7 @@ source 'http://rubygems.org'
 
 gem 'json', '>= 1.5.0', :platforms => [:ruby_18]
 gem 'nokogiri', '>= 1.5.0'
+gem 'rubyzip', '>= 0.9.5'
 
 group :chat do
   gem 'activesupport', '>= 3.0.0'
