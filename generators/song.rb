@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby1.9.1
+#!/usr/bin/env ruby
 
 require 'rubygems'
 require 'digest/md5'
@@ -38,8 +38,8 @@ class SmSong
         {}
       },
       :sync => {
-        :bpms => @bpms.sort,
-        :breaks => @breaks.sort 
+        :bpms => @bpms,
+        :breaks => @breaks 
       },
       
     }
@@ -87,8 +87,8 @@ class SmSong
       when 'offset'
         @breaks << [0, section.to_f]
       when 'stops'
-        @stops << section.split(',').map do |directive|
-          directive.split('=').map(&:strip).map(&:to_f)
+        @breaks << section.split(',').map do |pair|
+          pair.split('=').map(&:strip).map(&:to_f)
         end
         
       when 'bpms'
@@ -125,7 +125,7 @@ song.parse_smzip File.expand_path(ARGV[0])
 # Create json file.
 FileUtils.mkpath File.join('public', File.dirname(song.json_path))
 File.open(File.join('public', song.json_path), 'w') do |f|
-  JSON.dump f, song.as_json
+  JSON.dump song.as_json, f
 end
 
 # Create music file.
