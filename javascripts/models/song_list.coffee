@@ -1,6 +1,6 @@
 # Keeps track of all songs that can be played.
 class SongList
-  initialize: (jsonData) ->
+  constructor: (jsonData) ->
     @songs = jsonData
   
   # Singleton instance.
@@ -13,5 +13,5 @@ class SongList
   # All songs that can be played.
   @songs: ->
     @instance.songs
-    
+
 window.onSongList = (jsonData) -> SongList.onJsonp jsonData

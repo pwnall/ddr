@@ -46,6 +46,7 @@ class SmSong
   # The song's index entry, as a hash that obeys the JSON format restrictions.
   def index_entry_as_json
     {
+      :id => basename,
       :json => json_path,
       :music => music_path,
       :metadata => @metadata,

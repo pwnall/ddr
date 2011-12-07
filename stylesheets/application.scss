@@ -12,9 +12,6 @@ html, body {
 }
 
 #browser-window {
-  @include horizontal-flexbox;
-  @include flexbox-reverse;
-
   @include border-box-sizing;
   height: 100%;
   padding: 5px 0 0 0;

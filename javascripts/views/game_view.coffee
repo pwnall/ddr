@@ -1,3 +1,3 @@
 class GameView
-  initialize: ->
+  constructor: ->
     null

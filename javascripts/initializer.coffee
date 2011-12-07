@@ -1,4 +1,4 @@
-# Sets up everything when the document loads.
+# Fires up the views when the document loads.
 $ ->
   console.log $('body').attr('id')
   switch $('body').attr('id')
