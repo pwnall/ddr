@@ -30,18 +30,30 @@ class SmSong
     end
   end
   
-  # Hash that obeys the JSON format restriction.
+  # Hash that obeys the JSON format restrictions.
   def as_json
     {
       :metadata => @metadata,
-      :sheets => @sheets.each { |sheet|
-        {}
-      },
+      :sheets => @sheets,
       :sync => {
         :bpms => @bpms,
         :breaks => @breaks 
       },
       :music => music_path
+    }
+  end
+  
+  # The song's index entry, as a hash that obeys the JSON format restrictions.
+  def index_entry_as_json
+    {
+      :json => json_path,
+      :music => music_path,
+      :metadata => @metadata,
+      :sync => {
+        :bpms => @bpms,
+        :breaks => @breaks 
+      },
+      :sheets => @sheets.map { |sheet| sheet[:metadata] }
     }
   end
 
@@ -53,6 +65,11 @@ class SmSong
   # Path to the song's JSON file, relative to public/
   def music_path
     "songs/#{basename}.#{music_format}"
+  end
+
+  # Path to the song's entry file in the big index, relative to public/
+  def index_entry_path
+    "songs/#{basename}.ndx-json"
   end
   
   # Extension of the song's music file (most likely mp3).
@@ -93,6 +110,7 @@ class SmSong
         @metadata[:sample_start] = section.to_f
       when 'samplestart'
         @metadata[:sample_length] = section.to_f
+        
       when 'music'
         @media[:music] = File.join(path, section)
 
@@ -223,7 +241,7 @@ end
 song = SmSong.new
 song.parse_smzip File.expand_path(ARGV[0])
 
-# Create json file.
+# Create JSON data file.
 FileUtils.mkpath File.join('public', File.dirname(song.json_path))
 File.open(File.join('public', song.json_path), 'w') do |f|
   JSON.dump song.as_json, f
@@ -233,4 +251,10 @@ end
 FileUtils.mkpath File.join('public', File.dirname(song.music_path))
 File.open(File.join('public', song.music_path), 'wb') do |f|
   f.write song.music_data
+end
+
+# Create JSON index entry file.
+FileUtils.mkpath File.join('public', File.dirname(song.index_entry_path))
+File.open(File.join('public', song.index_entry_path), 'w') do |f|
+  JSON.dump song.index_entry_as_json, f
 end
