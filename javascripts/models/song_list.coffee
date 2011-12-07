@@ -4,7 +4,7 @@ class SongList
     @songs = jsonData
   
   # Singleton instance.
-  @instance = null
+  @singleton = null
   
   # Loads up a JSON list of the song index.
   @onJsonp: (jsonData) ->
@@ -12,6 +12,7 @@ class SongList
   
   # All songs that can be played.
   @songs: ->
-    @instance.songs
+    @singleton.songs
 
+# Callback for song list JSONP.
 window.onSongList = (jsonData) -> SongList.onJsonp jsonData

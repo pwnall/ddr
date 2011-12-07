@@ -33,6 +33,7 @@ class SmSong
   # Hash that obeys the JSON format restrictions.
   def as_json
     {
+      :id => basename,
       :metadata => @metadata,
       :sheets => @sheets,
       :sync => {
@@ -116,7 +117,7 @@ class SmSong
         @media[:music] = File.join(path, section)
 
       when 'offset'
-        @breaks << { :beat => 0, :seconds => section.to_f }
+        @breaks << { :beat => -1, :seconds => section.to_f }
       when 'stops'
         @breaks << section.split(',').map do |pair|
           beat, seconds = *pair.split('=').map(&:strip).map(&:to_f)

@@ -15,6 +15,10 @@ class DdrWeb < Sinatra::Application
   
   # Game HTML.
   get '/game' do
+    @song = {
+      :id => params[:id].to_s.gsub('/', ''),  # Kill path manipulation.
+      :steps => params[:steps].to_i
+    }
     erb :game
   end
   
@@ -29,6 +33,13 @@ class DdrWeb < Sinatra::Application
     json = '[' + Dir['public/songs/*.ndx-json'].sort.map { |index_piece|
       File.read(index_piece)
     }.join(',') + ']'
+    "#{cb}(#{json});"
+  end
+  
+  # Song information JSONP.
+  get '/song_data.jsonp' do
+    cb = params['callback'] || 'onJsonp'
+    json = File.read("public/songs/#{params[:id]}.json")
     "#{cb}(#{json});"
   end
   
