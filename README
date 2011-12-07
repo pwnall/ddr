@@ -1,0 +1,36 @@
+SETUP
+---
+
+1. Get Ruby, Rubygems, and bundler.
+sudo apt-get install ruby-full
+sudo gem update --system
+sudo gem install bundler
+
+2. Install all the required gems.
+bundle install
+
+3. Start up the web server.
+bundle exec shotgun config.ru
+nohup bundle exec unicorn config.ru > web.log &
+
+
+GAMEPAD SETUP
+---
+
+Until the Gamepad API works, you'll need a joystick -> keyboard mapper. The
+steps below get you set on Ubuntu.
+
+1. Get utilties.
+sudo apt-get install joystick joy2key
+
+2. Get your dance pad configuration in ~/.joy2keyrc
+The configuration below works for my system.
+
+START ddr   
+-X
+-thresh -16383 16383 -16383 16383
+-axis k i j l
+-buttons a x w d z c q e
+
+3. Start joy2key, and point it to the Chrome window
+joy2key -config ddr

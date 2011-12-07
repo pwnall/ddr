@@ -1,0 +1,47 @@
+@import 'reset';
+@import 'border_radius';
+@import 'box_sizing';
+@import 'flexbox';
+
+@import 'chat_box';
+
+html, body {
+  width: 800px;
+  height: 100%;
+  margin: 0 auto;
+}
+
+#browser-window {
+  @include horizontal-flexbox;
+  @include flexbox-reverse;
+
+  @include border-box-sizing;
+  height: 100%;
+  padding: 5px 0 0 0;
+}
+
+.chat-box {
+  width: 400px;
+}
+
+.login-box {
+  display: table;
+  .field {
+    display: table-row;
+    label, input {
+      display: table-cell;
+    }
+    label {
+      min-width: 4em;
+    }
+    input {
+      @include border-box-sizing;
+      width: 100%; 
+    }
+  }
+  .action {
+    display: table-row;
+    text-align: center;
+  }
+  width: 20em;
+}

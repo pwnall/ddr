@@ -1,0 +1,5 @@
+.sass-cache
+*.rbc
+*.log
+public/songs/*
+
