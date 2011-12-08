@@ -17,6 +17,28 @@ class Song
         break
     delete @rawSheets
     
+  # Returns the beat at a time.
+  # 
+  # @param [Number] time the time, expressed in seconds
+  # @return [Number] the beat number; can be negative and/or fractional
+  beatAtTime: (time) ->
+    # Binary search for the base beat.
+    low = 0 
+    high = @lastBeat
+    while low <= high
+      middle = (low + high) >> 1
+      if time < @beatTime[middle]
+        high = middle - 1
+      else if time > @beatTime[middle]
+        low = middle + 1
+      else
+        break
+    
+    # High will be -1 if the time is before the song's start.
+    high = 0 if high < 0
+
+    high + (time - @beatTime[high]) * @beatBpm[high] / 60.0
+    
   # Processes the data pertaining to synchronizing notes to the audio file.
   loadSyncData: (data) ->
     @rawBpms = data.bpms
@@ -41,7 +63,7 @@ class Song
   # Processes @rawBpms and @rawPauses into @beatBpm, @beatTime, and @beatPause.
   computeBeatMaps: ->
     @rawBpms.sort()
-    @rawBpms.push({beat: @lastBeat, bpms: 1})
+    @rawBpms.push({beat: @lastBeat + 1, bpms: 1})
     @beatBpm = []
     beat0 = null
     bpm0 = 0
@@ -56,6 +78,7 @@ class Song
     @beatPause = {}
     time = 0
     pauseIndex = 0
+    console.log @rawPauses
     for beat in [0..@lastBeat]
       while @rawPauses[pauseIndex] && @rawPauses[pauseIndex].beat < beat
         pause = @rawPauses[pauseIndex]
