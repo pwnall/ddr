@@ -52,17 +52,18 @@ class Song
       bpm0 = rawBpm.bpm
     delete @rawBpms
     
-    pauseIndex = 0
-    @beatTimes = []
+    @beatTime = []
     @beatPause = {}
     time = 0
+    pauseIndex = 0
     for beat in [0..@lastBeat]
       while @rawPauses[pauseIndex] && @rawPauses[pauseIndex].beat < beat
         pause = @rawPauses[pauseIndex]
         @beatPause[pause.beat] = pause.seconds
         time += pause.seconds
         pauseIndex += 1
-      @beatTimes[beat] = time    
+      @beatTime[beat] = time
+      time += 60.0 / @beatBpm[beat]
     delete @rawPauses
     
 

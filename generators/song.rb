@@ -1,5 +1,17 @@
 #!/usr/bin/env ruby
 
+# Usage:
+#   generators/song.rb path/to/song.smzip
+#
+# Get songs from:
+#   http://www.stepmania.com/browse.php?sort=recent
+#
+# References:
+#   http://www.stepmania.com/wiki/The_.SM_file_format
+#   http://legendaryn8.hubpages.com/hub/How-to-Play-DDR-Intermediate
+#   http://dwi.ddruk.com/readme.php#4
+
+
 require 'rubygems'
 require 'digest/md5'
 require 'json'
@@ -117,9 +129,9 @@ class SmSong
         @media[:music] = File.join(path, section)
 
       when 'offset'
-        @breaks << { :beat => -1, :seconds => section.to_f }
+        @breaks.unshift({ :beat => -1, :seconds => section.to_f })
       when 'stops'
-        @breaks << section.split(',').map do |pair|
+        @breaks += section.split(',').map do |pair|
           beat, seconds = *pair.split('=').map(&:strip).map(&:to_f)
           { :beat => beat, :seconds => seconds }
         end
