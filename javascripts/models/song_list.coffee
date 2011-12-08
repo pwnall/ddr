@@ -8,11 +8,11 @@ class SongList
   
   # Loads up a JSON list of the song index.
   @onJsonp: (jsonData) ->
-    @instance = new SongList jsonData
+    @singleton = new SongList jsonData
   
   # All songs that can be played.
   @songs: ->
     @singleton.songs
 
 # Callback for song list JSONP.
-window.onSongList = (jsonData) -> SongList.onJsonp jsonData
+window.onSongList = (jsonData) -> SongList.onJsonp(jsonData)
