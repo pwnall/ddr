@@ -1,5 +1,5 @@
-# Gamepad input interface.
-class Gamepads
+# Keyboard input interface.
+class KeyboardInput
   @gamepads = {}
   
   @initialize: ->
@@ -15,4 +15,4 @@ class Gamepads
     delete @gamepads[gamepad.id]
     console.log ['removed', gamepad]
 
-Gamepads.initialize()
+GamepadInput.initialize()

@@ -17,28 +17,3 @@ html, body {
   padding: 5px 0 0 0;
 }
 
-.chat-box {
-  width: 400px;
-}
-
-.login-box {
-  display: table;
-  .field {
-    display: table-row;
-    label, input {
-      display: table-cell;
-    }
-    label {
-      min-width: 4em;
-    }
-    input {
-      @include border-box-sizing;
-      width: 100%; 
-    }
-  }
-  .action {
-    display: table-row;
-    text-align: center;
-  }
-  width: 20em;
-}
