@@ -1,19 +1,8 @@
-@import 'reset';
-@import 'border_radius';
-@import 'box_sizing';
-@import 'flexbox';
+@import 'generic/reset';
+@import 'generic/border_radius';
+@import 'generic/box_sizing';
+@import 'generic/flexbox';
 
-@import 'chat_box';
-
-html, body {
-  width: 800px;
-  height: 100%;
-  margin: 0 auto;
-}
-
-#browser-window {
-  @include border-box-sizing;
-  height: 100%;
-  padding: 5px 0 0 0;
-}
+@import 'layout';
+@import 'song_header';
 

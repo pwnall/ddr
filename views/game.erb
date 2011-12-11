@@ -3,7 +3,6 @@
     <title>DDR</title>
     <link rel="stylesheet" href="application.css" type="text/css" />
 
-    <script src="jquery.js" type="text/javascript"></script>
     <script src="application.js" type="text/javascript"></script>
     <script src="song_data.jsonp?id=<%= @song[:id] %>&callback=onSongData"
             type="text/javascript">
@@ -12,8 +11,44 @@
       onSongDifficulty({steps: <%= @song[:steps] %>});
     </script>
   </head>
-  <body id="game">
-    <div id="browser-window">
-    </div>
+  <body id="game-view">
+    <header>
+      <p class="song-header-generic">
+        <span class="song-header-title">Song name</span>
+        <span class="song-header-subtitle"></span>
+        by
+        <span class="song-header-artist"></span>
+        <span class="song-header-credit"></span>
+      </p>
+      <p class="song-header-difficulty">
+        <span class="song-difficulty-class"></span>
+        (<span class="song-difficulty-steps"></span> steps)
+      </p>
+      <p class="show-header">
+        1 player
+      </p>
+    </header>
+    <article class="show-arena">
+    </article>
+    <footer>
+      <p>Control help here</p>
+    </footer>
+
+    <script type="text/html" id="player-show-view">
+      <section class="player-show-arena">
+        <aside class="player-score-area">
+          <span class="player-name">
+            
+          </span>
+          <span class="player-score">
+            0
+          </span>
+        </aside>
+        <section class="player-controls-area">
+        </section>
+        <section class="player-sheet-area">
+        </section>
+      </section>
+    </script>
   </body>
 </html>

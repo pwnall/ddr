@@ -78,7 +78,6 @@ class Song
     @beatPause = {}
     time = 0
     pauseIndex = 0
-    console.log @rawPauses
     for beat in [0..@lastBeat]
       while @rawPauses[pauseIndex] && @rawPauses[pauseIndex].beat < beat
         pause = @rawPauses[pauseIndex]
@@ -100,6 +99,3 @@ window.onSongData = (jsonData) ->
 # Callback for song difficulty data JSONP.
 window.onSongDifficulty = (jsonData) ->
   Song.singleton.seletSheet jsonData.steps
-
-# Help debugging.
-window.Song = Song
