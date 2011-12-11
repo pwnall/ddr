@@ -1,0 +1,9 @@
+article.show-arena {
+  @include flexbox-rubber-child;
+  @include horizontal-flexbox;
+
+  > section.player-show-arena {
+    @include flexbox-rubber-child;
+    @include vertical-flexbox;
+  }
+}

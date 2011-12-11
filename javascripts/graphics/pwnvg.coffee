@@ -1,4 +1,4 @@
-# Wraps a SVG element.
+# Wraps a <svg> element.
 class Pwnvg
   # Creates a SVG element inside a container.
   #
@@ -48,7 +48,7 @@ class Pwnvg
   @path: ->
     new PwnvgPathBuilder
 
-# Wraps a SVG element like a path.
+# Wraps a drawing element inside <svg>, like a path.
 class PwnvgElement
   # Creates a wrapper around a SVG DOM element.
   constructor: (@dom) ->

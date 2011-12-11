@@ -14,7 +14,3 @@ class GameView
     $E('article', @domRoot).appendChild viewDom
     @playerViews[playerShow.playerIndex] =
        new PlayerShowView playerShow, viewDom 
-
-# Container for the views that make up a player's sub-screen.
-class PlayerShowView
-  constructor: (@viewDom) ->

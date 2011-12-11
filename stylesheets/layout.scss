@@ -17,8 +17,3 @@ header, footer {
 header {
   font-weight: bold;
 }
-
-article {
-  @include flexbox-rubber-child;
-  @include horizontal-flexbox;
-}
