@@ -5,5 +5,9 @@ article.show-arena {
   > section.player-show-arena {
     @include flexbox-rubber-child;
     @include vertical-flexbox;
+    
+    > aside.player-score-area {
+      
+    }
   }
 }
