@@ -6,7 +6,9 @@ class GameController
     @song = Song.singleton
     @view.setSong @song
     
+    # TODO(pwnall): pull the player identities from somewhere
     @addPlayer new Player('pwnall')
+    @addPlayer new Player('killdragon')
 
   # Adds a player to the game.
   #

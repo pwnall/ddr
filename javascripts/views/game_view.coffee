@@ -12,5 +12,6 @@ class GameView
   addedPlayer: (playerShow) ->
     viewDom = $H $D('#player-show-view').innerText
     $E('article', @domRoot).appendChild viewDom
+    viewDom = $E('article > section:last-child', @domRoot)
     @playerViews[playerShow.playerIndex] =
        new PlayerShowView playerShow, viewDom 

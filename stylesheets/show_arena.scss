@@ -6,8 +6,25 @@ article.show-arena {
     @include flexbox-rubber-child;
     @include vertical-flexbox;
     
+    padding: 0 5%;
+    
     > aside.player-score-area {
+      position: relative;
+      color: hsl(60deg, 100%, 100%);
+      font-size: 24pt;
+      .player-score {
+        display: block;
+        position: absolute;
+        right: 0;
+        top: 0;
+        font-family: monospace;
+      }
+    }
+    > section.player-controls-area {
       
+    }
+    > section.player-sheet-area {
+      @include flexbox-rubber-child;
     }
   }
 }

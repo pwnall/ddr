@@ -1,0 +1,20 @@
+{
+  'notes': [
+    {
+      'player': 1,
+      'image': 'left'
+    },
+    {
+      'player': 1,
+      'image': 'up'
+    },
+    {
+      'player': 1,
+      'image': 'down'
+    },
+    {
+      'player': 1,
+      'image': 'right'
+    }
+  ]
+}

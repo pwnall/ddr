@@ -2,7 +2,7 @@
 class Song
   # Parses the song's JSON description.
   #
-  # The song won't be usable until seletSheet is called.
+  # The song won't be usable until selectSheet is called.
   constructor: (jsonData) ->
     @metadata = jsonData.metadata
     @musicUrl = jsonData.music    
@@ -10,12 +10,16 @@ class Song
     @loadSyncData jsonData.sync
 
   # Processes the note sheet for the given difficulty level.
-  seletSheet: (steps) ->
+  selectSheet: (steps) ->
     for sheet in @rawSheets
       if sheet.metadata.difficulty.steps == steps
         @loadSheet sheet
         break
     delete @rawSheets
+  
+  # Loads per-note data (drawing information).
+  setNotesData: (jsonData) ->
+    
     
   # Returns the beat at a time.
   # 
@@ -37,7 +41,17 @@ class Song
     # High will be -1 if the time is before the song's start.
     high = 0 if high < 0
 
-    high + (time - @beatTime[high]) * @beatBpm[high] / 60.0
+    time -= @beatTime[high]
+    if @beatPause[high]
+      # There's a pause on this beat, need to account for it.
+      if time >= 0 and time < @beatPause[high]
+        # NOTE: we need to check time >= 0, just in case there's a nasty pause
+        #       at beat 0
+        high
+      else
+        high + (time - @beatPause[high]) * @beatBpm[high] / 60.0
+    else
+      high + time * @beatBpm[high] / 60.0
     
   # Processes the data pertaining to synchronizing notes to the audio file.
   loadSyncData: (data) ->
@@ -98,4 +112,8 @@ window.onSongData = (jsonData) ->
 
 # Callback for song difficulty data JSONP.
 window.onSongDifficulty = (jsonData) ->
-  Song.singleton.seletSheet jsonData.steps
+  Song.singleton.selectSheet jsonData.steps
+
+# Callback for song notes data JSONP.
+window.onSongNotes = (jsonData) ->
+  Song.singleton.setNotes

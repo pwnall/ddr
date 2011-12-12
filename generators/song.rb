@@ -180,7 +180,7 @@ class SmSong
                 # Nothing.
               when '1'
                 # Tap.
-                note = { :index => note_index, :type => :tap,
+                note = { :number => note_index, :type => :tap,
                          :start_beat => beat }
                 notes << note
               when '2'
@@ -188,7 +188,7 @@ class SmSong
                 hold_starts[note_index] = beat
               when '3'
                 # End hold.
-                note = { :index => note_index, :type => :hold,
+                note = { :number => note_index, :type => :hold,
                          :start_beat => hold_starts[note_index],
                          :end_beat => beat }
                 notes << note
@@ -197,14 +197,14 @@ class SmSong
                 raise 'Rolls not yet implemented'
               when 'M'
                 # Mine.
-                note = { :index => note_index, :type => :mine,
+                note = { :number => note_index, :type => :mine,
                          :start_beat => beat }
                 notes << note
               when 'L'
                 raise 'Lifts not yet implemented'
               else
                 # Special tap.
-                note = { :index => note_index, :type => :tap,
+                note = { :number => note_index, :type => :tap,
                          :start_beat => beat, :tap_note => note_type }
                 notes << note
               end
@@ -215,26 +215,15 @@ class SmSong
         # Note coalescing.
         notes.sort_by! do |note|
           [note[:start_beat], note[:end_beat] || note[:start_beat],
-           note[:index]]
+           note[:number]]
         end
         
-        # Note naming.
-        notes.each do |note|
-          note[:name] = note_name sheet_type, note[:index]
-          note.delete :index
-        end
-
         sheet[:notes] = notes
         @sheets << sheet
       end
     end
   end
   
-  # Converts note indexes (positions on the .sm sheet) to "names" (codes).
-  def note_name(sheet_type, note_index)
-    %w(l d u r)[note_index]
-  end
-   
   # Unpacks a .zip file into the @fs_data internal structure. 
   def unpack_smzip(path)
     Zip::ZipFile.open(path) do |zip|
