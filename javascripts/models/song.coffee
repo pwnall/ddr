@@ -17,9 +17,23 @@ class Song
         break
     delete @rawSheets
   
-  # Loads per-note data (drawing information).
-  setNotesData: (jsonData) ->
-    
+  # Loads the style definition for the sheet.
+  #
+  # The style definition describes how notes are drawn and which note belongs
+  # to which player.
+  setSheetStyleDef: (jsonData) ->
+    @style = {}
+    @style.notes = for jsonNote in jsonData.notes
+      {
+        player: jsonNote.player - 1,
+        display: jsonNote.position - 1,
+        svg: jsonData.images[jsonNote.image]
+      }
+      
+    @style.display = []
+    for note in @style.notes
+      @style.display[note.player] ||= []
+      @style.display[note.player][note.display] = note
     
   # Returns the beat at a time.
   # 
@@ -102,18 +116,21 @@ class Song
       time += 60.0 / @beatBpm[beat]
     delete @rawPauses
     
-
   # Singleton instance.
   @singleton = null
   
 # Callback for song data JSONP.
-window.onSongData = (jsonData) ->
-  Song.singleton = new Song jsonData
+window.onSongData = (jsonData) -> Song.singleton = new Song jsonData
 
 # Callback for song difficulty data JSONP.
 window.onSongDifficulty = (jsonData) ->
   Song.singleton.selectSheet jsonData.steps
+  
+  sheetStyle = Song.singleton.metadata.sheet.type
+  script = document.createElement 'script'
+  script.setAttribute 'src',
+      "style_def.jsonp?id=#{sheetStyle}&callback=onSongStyleDef"
+  document.querySelector('head').appendChild script
 
 # Callback for song notes data JSONP.
-window.onSongNotes = (jsonData) ->
-  Song.singleton.setNotes
+window.onSongStyleDef = (jsonData) -> Song.singleton.setSheetStyleDef jsonData

@@ -19,6 +19,26 @@
       "player": 1,
       "position": 4,
       "image": "right"
+    },
+    {
+      "player": 2,
+      "position": 1,
+      "image": "left"
+    },
+    {
+      "player": 2,
+      "position": 2,
+      "image": "up"
+    },
+    {
+      "player": 2,
+      "position": 3,
+      "image": "down"
+    },
+    {
+      "player": 2,
+      "position": 4,
+      "image": "right"
     }
   ]
 }

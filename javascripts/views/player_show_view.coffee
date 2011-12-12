@@ -4,7 +4,7 @@ class PlayerShowView
     controlsDom = $E('section.player-controls-area', @viewDom)
     @controlsView = new PlayerControlsView @show, controlsDom
     sheetDom = $E('section.player-sheet-area', @viewDom)
-    @sheetView = new PlayerSheetView @show, controlsDom
+    @sheetView = new SheetView @show, controlsDom
     
     @player = @show.player
     @setPlayer @player

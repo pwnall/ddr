@@ -1,56 +1,8 @@
-# Wraps a <svg> element.
-class Pwnvg
-  # Creates a SVG element inside a container.
-  #
-  # @param svgContainer a DOM element that will receive the new SVG element
-  # @param minX left of the SVG coordinate system
-  # @param maxX right of the SVG coordinate system
-  # @param minY top of the SVG coordinate system
-  # @param maxY bottom of the SVG coordinate system
-  constructor: (@svgContainer, @minX, @minY, @maxX, @maxY) ->
-    @svg = document.createElementNS 'http://www.w3.org/2000/svg', 'svg'
-    @svg.setAttribute 'version', '1.1'
-    @svg.setAttribute 'viewBox',
-                      "#{@minX} #{@minY} #{@maxX - @minX} #{@maxY - @minY}"
-    svgContainer.appendChild @svg
-
-  # Creates a path inside the SVG element.
-  path: (pathData) ->
-    dom = document.createElementNS 'http://www.w3.org/2000/svg', 'path'
-    dom.setAttribute 'd', pathData.toString()
-    @svg.appendChild dom
-    new PwnvgElement dom
-
-  # Creates a rectangle inside the SVG element.
-  rect: (x1, y1, x2, y2) ->
-    [x2, x1] = [x1, x2] if x1 > x2
-    [y2, y1] = [y1, y2] if y1 > y2
-    dom = document.createElementNS 'http://www.w3.org/2000/svg', 'rect'
-    dom.setAttribute 'x', x1
-    dom.setAttribute 'y', y1
-    dom.setAttribute 'width', x2 - x1
-    dom.setAttribute 'height', y2 - y1
-    @svg.appendChild dom
-    new PwnvgElement dom
-
-  # Creates a circle inside the SVG element.
-  circle: (x, y, r) ->
-    dom = document.createElementNS 'http://www.w3.org/2000/svg', 'circle'
-    dom.setAttribute 'cx', x
-    dom.setAttribute 'cy', y
-    dom.setAttribute 'r', r
-    @svg.appendChild dom
-    new PwnvgElement dom
-
-  # Helper for building a path data string.
-  #
-  # @return a new PwnvgPathBuilder instance
-  @path: ->
-    new PwnvgPathBuilder
-
 # Wraps a drawing element inside <svg>, like a path.
 class PwnvgElement
   # Creates a wrapper around a SVG DOM element.
+  #
+  # @param [DOMElement] dom the DOM element.
   constructor: (@dom) ->
 
   # True if the element's class list includes the given argument.
@@ -118,6 +70,100 @@ class PwnvgElement
   strokeWidth: (width) ->
     @dom.setAttribute 'stroke-width', width.toString()
     @
+
+# Wraps a SVG element that can hold drawing commands.
+#
+# Example SVG elements are <svg>, <g>, and <defs>.
+class PwnvgContainer extends PwnvgElement
+  # Creates a path inside the SVG container.
+  path: (pathData) ->
+    newDom = document.createElementNS 'http://www.w3.org/2000/svg', 'path'
+    newDom.setAttribute 'd', pathData.toString()
+    @dom.appendChild newDom
+    new PwnvgElement newDom
+
+  # Creates a rectangle inside the SVG container.
+  rect: (x1, y1, x2, y2) ->
+    [x2, x1] = [x1, x2] if x1 > x2
+    [y2, y1] = [y1, y2] if y1 > y2
+    newDom = document.createElementNS 'http://www.w3.org/2000/svg', 'rect'
+    newDom.setAttribute 'x', x1
+    newDom.setAttribute 'y', y1
+    newDom.setAttribute 'width', x2 - x1
+    newDom.setAttribute 'height', y2 - y1
+    @dom.appendChild newDom
+    new PwnvgElement newDom
+
+  # Creates a circle inside the SVG container.
+  circle: (x, y, r) ->
+    newDom = document.createElementNS 'http://www.w3.org/2000/svg', 'circle'
+    newDom.setAttribute 'cx', x
+    newDom.setAttribute 'cy', y
+    newDom.setAttribute 'r', r
+    @dom.appendChild newDom
+    new PwnvgElement newDom
+  
+  # Creates a symbol inside the SVG container.
+  #
+  # Ideally, the symbol should be created in a <defs> container.
+  symbol: (id) ->
+    newDom = document.createElementNS 'http://www.w3.org/2000/svg', 'symbol'
+    newDom.id = id
+    @dom.appendChild newDom
+    new PwnvgContainer newDom
+
+  # Creates a group inside the SVG container.
+  group: ->
+    newDom = document.createElementNS 'http://www.w3.org/2000/svg', 'group'
+    @dom.appendChild newDom
+    new PwnvgContainer newDom
+    
+  # Instantiates a previously defined object.
+  use: (uri, x, y, width, height) ->
+    newDom = document.createElementNS 'http://www.w3.org/2000/svg', 'use'
+    newDom.setAttribute 'x', x
+    newDom.setAttribute 'y', y
+    newDom.setAttribute 'width', width
+    newDom.setAttribute 'height', height
+    newDom.setAttributeNS 'http://www.w3.org/1999/xlink', 'href', uri
+    new PwnvgElement newDom
+  
+  # Parses some raw SVG as a container and injects it into the tree.
+  rawGroup: (xml) ->
+    lastChild = @dom.lastChild
+    @dom.insertAdjacentHTML 'beforeend', xml
+    newDom = if lastChild then lastChild.nextSibling else @dom.firstChild
+    new PwnvgContainer newDom
+    
+  # Parses some raw SVG as a drawing element and injects it into the tree.
+  rawElement: (xml) ->
+    lastChild = @dom.lastChild
+    @dom.insertAdjacentHTML 'beforeend', xml
+    newDom = if lastChild then lastChild.nextSibling else @dom.firstChild
+    new PwnvgElement newDom
+
+  # Helper for building a path data string.
+  #
+  # @return a new PwnvgPathBuilder instance
+  @path: ->
+    new PwnvgPathBuilder
+  
+# Wraps a <svg> element.
+class Pwnvg extends PwnvgContainer
+  # Creates a SVG element inside a container.
+  #
+  # @param domContainer a DOM element that will receive the new SVG element
+  # @param minX left of the SVG coordinate system
+  # @param maxX right of the SVG coordinate system
+  # @param minY top of the SVG coordinate system
+  # @param maxY bottom of the SVG coordinate system
+  constructor: (domContainer, @minX, @minY, @maxX, @maxY) ->
+    newDom = document.createElementNS 'http://www.w3.org/2000/svg', 'svg'
+    newDom.setAttribute 'version', '1.1'
+    newDom.setAttribute 'viewBox',
+                        "#{@minX} #{@minY} #{@maxX - @minX} #{@maxY - @minY}"
+    domContainer.appendChild newDom
+    super newDom
 
 # Builder for path data strings.
 class PwnvgPathBuilder

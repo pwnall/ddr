@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Usage:
-#   generators/song.rb path/to/song.smzip
+#   bundle exec generators/song.rb path/to/song.smzip
 #
 # Get songs from:
 #   http://www.stepmania.com/browse.php?sort=recent

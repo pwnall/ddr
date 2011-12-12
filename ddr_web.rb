@@ -16,7 +16,7 @@ class DdrWeb < Sinatra::Application
   # Game HTML.
   get '/game' do
     @song = {
-      :id => params[:id].to_s.gsub('/', ''),  # Kill path manipulation.
+      :id => params[:id].to_s.gsub('/', ''),  # gsub kills path manipulation.
       :steps => params[:steps].to_i
     }
     erb :game
@@ -39,7 +39,16 @@ class DdrWeb < Sinatra::Application
   # Song information JSONP.
   get '/song_data.jsonp' do
     cb = params['callback'] || 'onJsonp'
-    json = File.read("public/songs/#{params[:id]}.json")
+    # gsub kills path manipulation.
+    json = File.read("public/songs/#{params[:id].gsub('/', '')}.json")
+    "#{cb}(#{json});"
+  end
+  
+  # Sheet style definition JSONP.
+  get '/style_def.jsonp' do
+    cb = params['callback'] || 'onJsonp'
+    # gsub kills path manipulation.
+    json = File.read("public/notes/defs/#{params[:id].gsub('/', '')}.json")
     "#{cb}(#{json});"
   end
   
