@@ -9,14 +9,6 @@ class Song
     @rawSheets = jsonData.sheets
     @loadSyncData jsonData.sync
 
-  # Processes the note sheet for the given difficulty level.
-  selectSheet: (steps) ->
-    for sheet in @rawSheets
-      if sheet.metadata.difficulty.steps == steps
-        @loadSheet sheet
-        break
-    delete @rawSheets
-  
   # Loads the style definition for the sheet.
   #
   # The style definition describes how notes are drawn and which note belongs
@@ -34,7 +26,16 @@ class Song
     for note in @style.notes
       @style.display[note.player] ||= []
       @style.display[note.player][note.display] = note
-    
+
+  # Processes the note sheet for the given difficulty level.
+  selectSheet: (steps, style) ->
+    for sheet in @rawSheets
+      if sheet.metadata.difficulty.steps == steps and
+         sheet.metadata.style == style 
+        @loadSheet sheet
+        break
+    delete @rawSheets
+      
   # Returns the beat at a time.
   # 
   # @param [Number] time the time, expressed in seconds
@@ -132,15 +133,9 @@ class Song
 # Callback for song data JSONP.
 window.onSongData = (jsonData) -> Song.singleton = new Song jsonData
 
-# Callback for song difficulty data JSONP.
-window.onSongDifficulty = (jsonData) ->
-  Song.singleton.selectSheet jsonData.steps
-  
-  sheetStyle = Song.singleton.metadata.sheet.type
-  script = document.createElement 'script'
-  script.setAttribute 'src',
-      "style_def.jsonp?id=#{sheetStyle}&callback=onSongStyleDef"
-  document.querySelector('head').appendChild script
-
 # Callback for song notes data JSONP.
 window.onSongStyleDef = (jsonData) -> Song.singleton.setSheetStyleDef jsonData
+
+# Callback for song difficulty data JSONP.
+window.onSongDifficulty = (jsonData) ->
+  Song.singleton.selectSheet jsonData.steps, jsonData.style

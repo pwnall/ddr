@@ -8,7 +8,11 @@
             type="text/javascript">
     </script>
     <script type="text/javascript">
-      onSongDifficulty({steps: <%= @song[:steps] %>});
+      onSongDifficulty({steps: <%= @song[:steps] %>,
+                        style: "<%= @song[:style] %>"});
+    </script>
+    <script type="text/javascript"
+        src="style_def.jsonp?id=<%= @song[:style] %>&callback=onSongStyleDef">
     </script>
   </head>
   <body id="game-view">

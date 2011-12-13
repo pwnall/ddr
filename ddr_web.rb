@@ -17,7 +17,8 @@ class DdrWeb < Sinatra::Application
   get '/game' do
     @song = {
       :id => params[:id].to_s.gsub('/', ''),  # gsub kills path manipulation.
-      :steps => params[:steps].to_i
+      :steps => params[:steps].to_i,
+      :style => params[:style]
     }
     erb :game
   end

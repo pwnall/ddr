@@ -16,11 +16,13 @@ class SongListView
       for sheet in song.sheets
         li = $H $D('#song-list-sheet-item').innerText
         gameLink = $E '.game', li
-        steps = sheet.difficulty.steps
         gameLink.innerText = sheet.difficulty['class']
-        gameLink.setAttribute('href', "/game?id=#{song.id}&steps=#{steps}")
+        steps = sheet.difficulty.steps
+        style = sheet.style
+        gameLink.setAttribute 'href',
+            "/game?id=#{song.id}&steps=#{steps}&style=#{style}"
         $E('.steps', li).innerText = steps.toString()
-        $E('.sheet-style', li).innerText = sheet.style.replace('_', '-')
+        $E('.sheet-style', li).innerText = style.replace('_', '-')
         levelsList.appendChild li
 
       domRoot.appendChild songLi
