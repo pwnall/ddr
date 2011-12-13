@@ -14,7 +14,10 @@ class GameController
   #
   # Returns the Show instance created to represent the player's performance.
   addPlayer: (player) ->
-    show = new Show player, @shows.length, @song
+    # Assign positions on the stage and sheet using round-robin.
+    sheetIndex = @shows.length % @song.style.display.length
+    stageIndex = @shows.length
+    show = new Show player, sheetIndex, stageIndex, @song
     @shows.push show
     @view.addedPlayer show
     show

@@ -71,6 +71,21 @@ class PwnvgElement
     @dom.setAttribute 'stroke-width', width.toString()
     @
 
+  # Sets the element's height.
+  height: (height) ->
+    @dom.setAttribute 'height', height.toString()
+    @
+
+  # Sets the element's width.
+  width: (width) ->
+    @dom.setAttribute 'width', width.toString()
+    @
+
+  # Sets the element's viewBox.
+  viewBox: (minX, minY, maxX, maxY) ->
+    @dom.setAttribute 'viewBox', "#{minX} #{minY} #{maxX - minX} #{maxY - minY}"
+    @
+
 # Wraps a SVG element that can hold drawing commands.
 #
 # Example SVG elements are <svg>, <g>, and <defs>.
@@ -137,9 +152,9 @@ class PwnvgContainer extends PwnvgElement
     
   # Parses some raw SVG as a drawing element and injects it into the tree.
   rawElement: (xml) ->
-    lastChild = @dom.lastChild
-    @dom.insertAdjacentHTML 'beforeend', xml
-    newDom = if lastChild then lastChild.nextSibling else @dom.firstChild
+    range = @dom.ownerDocument.createRange()
+    range.selectNode @dom
+    newDom = range.createContextualFragment xml
     new PwnvgElement newDom
 
   # Helper for building a path data string.
@@ -160,10 +175,9 @@ class Pwnvg extends PwnvgContainer
   constructor: (domContainer, @minX, @minY, @maxX, @maxY) ->
     newDom = document.createElementNS 'http://www.w3.org/2000/svg', 'svg'
     newDom.setAttribute 'version', '1.1'
-    newDom.setAttribute 'viewBox',
-                        "#{@minX} #{@minY} #{@maxX - @minX} #{@maxY - @minY}"
-    domContainer.appendChild newDom
     super newDom
+    @viewBox @minX, @minY, @maxX, @maxY
+    domContainer.appendChild newDom
 
 # Builder for path data strings.
 class PwnvgPathBuilder

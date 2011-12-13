@@ -27,7 +27,7 @@ class Song
       {
         player: jsonNote.player - 1,
         display: jsonNote.position - 1,
-        svg: jsonData.images[jsonNote.image]
+        image: jsonData.images[jsonNote.image]
       }
       
     @style.display = []
@@ -79,6 +79,9 @@ class Song
     # Beat range: 0 - @lastBeat
     @lastBeat = @computeLastBeat rawSheet.notes
     @computeBeatMaps()
+    
+    # Index the notes.
+    @loadNotes rawSheet.notes
 
   # Computes the maximum of the given notes' ending beat. 
   computeLastBeat: (notes) ->
@@ -115,6 +118,13 @@ class Song
       @beatTime[beat] = time
       time += 60.0 / @beatBpm[beat]
     delete @rawPauses
+
+  # Process the notes from the sheet's JSON data. 
+  loadNotes: (rawNotes) ->
+    @notes = []
+    for note in rawNotes
+      note.index = @notes.length
+      @notes.push note
     
   # Singleton instance.
   @singleton = null

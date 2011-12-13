@@ -6,9 +6,9 @@ $E = (cssSelector, base) -> base.querySelector cssSelector
 
 # Parse HTML fragment.
 $H = (html) ->
-  r = document.createRange()
-  r.selectNode document.body
-  r.createContextualFragment html
+  range = document.createRange()
+  range.selectNode document.body
+  range.createContextualFragment html
 
 # Extend window, for debugging purposes.
 window['$D'] = $D

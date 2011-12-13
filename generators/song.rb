@@ -143,12 +143,12 @@ class SmSong
         
       when 'notes'
         # Metadata.
-        type_text, desc, dclass, dmeter, radar, table_text =
+        style_text, desc, dclass, dmeter, radar, table_text =
             *section.split(':').map(&:strip)
-        sheet_type = type_text.gsub('-', '_').to_sym
+        sheet_style = style_text.gsub('-', '_').to_sym
         radar_data = *radar.split(',').map(&:to_f)
         sheet = { :metadata => {
-          :type => sheet_type,
+          :style => sheet_style,
           :description => desc,
           :difficulty => {
             :class => dclass,
@@ -212,7 +212,7 @@ class SmSong
           end
         end
         
-        # Note coalescing.
+        # Coalesce notes.
         notes.sort_by! do |note|
           [note[:start_beat], note[:end_beat] || note[:start_beat],
            note[:number]]

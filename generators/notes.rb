@@ -34,24 +34,18 @@ class StyleDef
     root = svg.root
     raise "#{image_id} is not an SVG image" unless root.name == 'svg'
     
-    # Convert the root symbol from <svg> to <symbol>.
-    root.name = 'symbol'
-    root['id'] = image_id
-
     # Strip all attributes except for viewBox.
     raise "#{image_id} does not have a viewBox" unless root['viewBox']
-    (root.attributes.keys - ['viewBox']).each do |name|
-      root.remove_attribute name
+    sizes = root['viewBox'].strip.split.map(&:to_f)
+    raise "#{image_id} has a poorly formatted viewBox" unless sizes.length == 4
+    unless sizes[0] == 0 && sizes[1] == 0
+      raise "#{image_id} has a viewBox that doesn't start at 0 0"
     end
-    
-    # Set width and height to "100%".
-    root['width'] = '100%'
-    root['height'] = '100%'
-    
-    # Remove xmlns= from the XML.
-    xml = root.to_xml
-    xml.sub!(/^\<symbol xmlns="http:\/\/www.w3.org\/2000\/svg"/, '<symbol')
-    xml
+
+    {
+      :width => sizes[2], :height => sizes[3],
+      :svg => root.inner_html.strip
+    }
   end
 end
 
