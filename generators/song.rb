@@ -222,6 +222,10 @@ class SmSong
         @sheets << sheet
       end
     end
+    
+    @sheets.sort_by! do |sheet|
+      [sheet[:metadata][:style], sheet[:metadata][:difficulty][:steps]]
+    end
   end
   
   # Unpacks a .zip file into the @fs_data internal structure. 
