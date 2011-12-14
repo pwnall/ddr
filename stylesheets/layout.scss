@@ -6,11 +6,9 @@ html, body {
 
 body {
   @include vertical-flexbox;
-  background: hsl(60deg, 0%, 0%);
 }
 
 header, footer {
-  color: hsl(60deg, 0%, 100%);
   text-align: center;  
   font-size: 18pt;
 }

@@ -10,7 +10,7 @@ class GameView
 
   # Updates the view to reflect the addition of a player.
   addedPlayer: (playerShow) ->
-    viewDom = $H $D('#player-show-view').innerText
+    viewDom = $H $D('#player-show-view').textContent
     $E('article', @domRoot).appendChild viewDom
     viewDom = $E('article > section:last-child', @domRoot)
     @playerViews[playerShow.stageIndex] =

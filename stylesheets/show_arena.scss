@@ -1,3 +1,14 @@
+@if false{
+body#game-view {
+  background: hsl(60deg, 0%, 0%);
+  
+  header, footer {
+    color: hsl(60deg, 0%, 100%);
+  }
+}
+}
+
+
 article.show-arena {
   @include flexbox-rubber-child;
   @include horizontal-flexbox;
@@ -21,7 +32,15 @@ article.show-arena {
       }
     }
     > section.player-controls-area {
-      
+      height: 100px;
+      @include flexbox;
+
+      > svg {
+        @include flexbox-rubber-child;
+        width: auto;
+        height: auto;
+        display: block;
+      }
     }
     > section.player-sheet-area {
       @include flexbox-rubber-child;

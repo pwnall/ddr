@@ -11,5 +11,5 @@ class PlayerShowView
     
   # Updates the view to reflect a change in the player's identity.
   setPlayer: (player) ->
-    $E('.player-name', @viewDom).innerText = player.name 
+    $E('.player-name', @viewDom).textContent = player.name 
     

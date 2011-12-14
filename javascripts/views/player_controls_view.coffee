@@ -13,9 +13,9 @@ class PlayerControlsView
     for displayNote in @show.song.style.display[@show.sheetIndex]
       image = displayNote.image
       @noteSvg[displayNote.display] =
-          @svg.symbol('note-' + displayNote.display).
-               viewBox(0, 0, image.width, image.height).
-               width('100%').height('100%')
+          @svg.defs.symbol('note-' + displayNote.display).
+                    viewBox(0, 0, image.width, image.height).
+                    width('100%').height('100%').aspectRatio('none')
       @noteSvg[displayNote.display].rawElement image.svg
-      @svg.use 'note-' + displayNote.display, 0, 100 * displayNote.display,
+      @svg.use '#note-' + displayNote.display, 100 * displayNote.display, 0,
                100, 100

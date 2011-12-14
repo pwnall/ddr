@@ -72,18 +72,31 @@ class PwnvgElement
     @
 
   # Sets the element's height.
+  #
+  # Most useful for <symbol>.
   height: (height) ->
     @dom.setAttribute 'height', height.toString()
     @
 
   # Sets the element's width.
+  #
+  # Most useful for <symbol>.
   width: (width) ->
     @dom.setAttribute 'width', width.toString()
     @
 
   # Sets the element's viewBox.
+  #
+  # Most useful for <symbol>.
   viewBox: (minX, minY, maxX, maxY) ->
     @dom.setAttribute 'viewBox', "#{minX} #{minY} #{maxX - minX} #{maxY - minY}"
+    @
+
+  # Sets the element's preserveAspectRatio attribute.
+  #
+  # Most useful for <symbol>.
+  aspectRatio: (preserveAspectRatio) ->
+    @dom.setAttribute 'preserveAspectRatio', preserveAspectRatio
     @
 
 # Wraps a SVG element that can hold drawing commands.
@@ -141,20 +154,23 @@ class PwnvgContainer extends PwnvgElement
     newDom.setAttribute 'width', width
     newDom.setAttribute 'height', height
     newDom.setAttributeNS 'http://www.w3.org/1999/xlink', 'href', uri
+    @dom.appendChild newDom
     new PwnvgElement newDom
   
   # Parses some raw SVG as a container and injects it into the tree.
   rawGroup: (xml) ->
-    lastChild = @dom.lastChild
-    @dom.insertAdjacentHTML 'beforeend', xml
-    newDom = if lastChild then lastChild.nextSibling else @dom.firstChild
+    range = @dom.ownerDocument.createRange()
+    range.selectNode @dom.ownerDocument.body
+    newDom = range.createContextualFragment xml
+    @dom.appendChild newDom
     new PwnvgContainer newDom
     
   # Parses some raw SVG as a drawing element and injects it into the tree.
   rawElement: (xml) ->
     range = @dom.ownerDocument.createRange()
-    range.selectNode @dom
+    range.selectNode @dom.ownerDocument.body
     newDom = range.createContextualFragment xml
+    @dom.appendChild newDom
     new PwnvgElement newDom
 
   # Helper for building a path data string.
@@ -162,7 +178,8 @@ class PwnvgContainer extends PwnvgElement
   # @return a new PwnvgPathBuilder instance
   @path: ->
     new PwnvgPathBuilder
-  
+
+
 # Wraps a <svg> element.
 class Pwnvg extends PwnvgContainer
   # Creates a SVG element inside a container.
@@ -178,6 +195,12 @@ class Pwnvg extends PwnvgContainer
     super newDom
     @viewBox @minX, @minY, @maxX, @maxY
     domContainer.appendChild newDom
+  
+    # Build out the <defs> section of the <svg>.
+    defsDom = document.createElementNS 'http://www.w3.org/2000/svg', 'defs'
+    newDom.appendChild defsDom
+    @defs = new PwnvgContainer defsDom
+
 
 # Builder for path data strings.
 class PwnvgPathBuilder
@@ -243,6 +266,7 @@ class PwnvgPathBuilder
   # The path data string constructed by this builder.
   toString: ->
     @command.join ''
+
 
 # Export the Pwnvg class.
 window.Pwnvg = Pwnvg

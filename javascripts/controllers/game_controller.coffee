@@ -8,7 +8,7 @@ class GameController
     
     # TODO(pwnall): pull the player identities from somewhere
     @addPlayer new Player('pwnall')
-    @addPlayer new Player('killdragon')
+    #@addPlayer new Player('killdragon')
 
   # Adds a player to the game.
   #
