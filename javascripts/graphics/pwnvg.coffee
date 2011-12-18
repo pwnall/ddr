@@ -58,45 +58,46 @@ class PwnvgElement
     
   # Sets the element's fill color.
   fill: (colorSpec) ->
-    @dom.setAttribute 'fill', colorSpec
+    @dom.setAttributeNS null, 'fill', colorSpec
     @
 
   # Sets the element's stroke color.
   stroke: (colorSpec) ->
-    @dom.setAttribute 'stroke', colorSpec
+    @dom.setAttributeNS null, 'stroke', colorSpec
     @
 
   # Sets the element's stroke width.
   strokeWidth: (width) ->
-    @dom.setAttribute 'stroke-width', width.toString()
+    @dom.setAttributeNS null, 'stroke-width', width.toString()
     @
 
   # Sets the element's height.
   #
   # Most useful for <symbol>.
   height: (height) ->
-    @dom.setAttribute 'height', height.toString()
+    @dom.setAttributeNS null, 'height', height.toString()
     @
 
   # Sets the element's width.
   #
   # Most useful for <symbol>.
   width: (width) ->
-    @dom.setAttribute 'width', width.toString()
+    @dom.setAttributeNS null, 'width', width.toString()
     @
 
   # Sets the element's viewBox.
   #
   # Most useful for <symbol>.
   viewBox: (minX, minY, maxX, maxY) ->
-    @dom.setAttribute 'viewBox', "#{minX} #{minY} #{maxX - minX} #{maxY - minY}"
+    @dom.setAttributeNS null, 'viewBox',
+                        "#{minX} #{minY} #{maxX - minX} #{maxY - minY}"
     @
 
   # Sets the element's preserveAspectRatio attribute.
   #
   # Most useful for <symbol>.
   aspectRatio: (preserveAspectRatio) ->
-    @dom.setAttribute 'preserveAspectRatio', preserveAspectRatio
+    @dom.setAttributeNS null, 'preserveAspectRatio', preserveAspectRatio
     @
 
 # Wraps a SVG element that can hold drawing commands.
@@ -106,7 +107,7 @@ class PwnvgContainer extends PwnvgElement
   # Creates a path inside the SVG container.
   path: (pathData) ->
     newDom = document.createElementNS 'http://www.w3.org/2000/svg', 'path'
-    newDom.setAttribute 'd', pathData.toString()
+    newDom.setAttributeNS null, 'd', pathData.toString()
     @dom.appendChild newDom
     new PwnvgElement newDom
 
@@ -115,19 +116,19 @@ class PwnvgContainer extends PwnvgElement
     [x2, x1] = [x1, x2] if x1 > x2
     [y2, y1] = [y1, y2] if y1 > y2
     newDom = document.createElementNS 'http://www.w3.org/2000/svg', 'rect'
-    newDom.setAttribute 'x', x1
-    newDom.setAttribute 'y', y1
-    newDom.setAttribute 'width', x2 - x1
-    newDom.setAttribute 'height', y2 - y1
+    newDom.setAttributeNS null, 'x', x1
+    newDom.setAttributeNS null, 'y', y1
+    newDom.setAttributeNS null, 'width', x2 - x1
+    newDom.setAttributeNS null, 'height', y2 - y1
     @dom.appendChild newDom
     new PwnvgElement newDom
 
   # Creates a circle inside the SVG container.
   circle: (x, y, r) ->
     newDom = document.createElementNS 'http://www.w3.org/2000/svg', 'circle'
-    newDom.setAttribute 'cx', x
-    newDom.setAttribute 'cy', y
-    newDom.setAttribute 'r', r
+    newDom.setAttributeNS null, 'cx', x
+    newDom.setAttributeNS null, 'cy', y
+    newDom.setAttributeNS null, 'r', r
     @dom.appendChild newDom
     new PwnvgElement newDom
   
@@ -142,36 +143,53 @@ class PwnvgContainer extends PwnvgElement
 
   # Creates a group inside the SVG container.
   group: ->
-    newDom = document.createElementNS 'http://www.w3.org/2000/svg', 'group'
+    newDom = document.createElementNS 'http://www.w3.org/2000/svg', 'g'
     @dom.appendChild newDom
     new PwnvgContainer newDom
     
   # Instantiates a previously defined object.
   use: (uri, x, y, width, height) ->
     newDom = document.createElementNS 'http://www.w3.org/2000/svg', 'use'
-    newDom.setAttribute 'x', x
-    newDom.setAttribute 'y', y
-    newDom.setAttribute 'width', width
-    newDom.setAttribute 'height', height
     newDom.setAttributeNS 'http://www.w3.org/1999/xlink', 'href', uri
+    newDom.setAttributeNS null, 'x', x
+    newDom.setAttributeNS null, 'y', y
+    newDom.setAttributeNS null, 'width', width
+    newDom.setAttributeNS null, 'height', height
     @dom.appendChild newDom
     new PwnvgElement newDom
   
-  # Parses some raw SVG as a container and injects it into the tree.
-  rawGroup: (xml) ->
-    range = @dom.ownerDocument.createRange()
-    range.selectNode @dom.ownerDocument.body
-    newDom = range.createContextualFragment xml
-    @dom.appendChild newDom
-    new PwnvgContainer newDom
-    
   # Parses some raw SVG as a drawing element and injects it into the tree.
-  rawElement: (xml) ->
+  rawSvgElem: (svgText) ->
+    new PwnvgElement @insertRawSvg(svgText)
+
+  # Parses some raw SVG as a container and injects it into the tree.
+  rawSvgGroup: (svgText) ->
+    new PwnvgContainer @insertRawSvg(svgText)
+    
+  # Parses a string containing a SVG fragment into this element's DOM tree.
+  #
+  # Returns the last created DOM element.
+  insertRawSvg: (svgText) ->
+    parser = new DOMParser
+    svgStart = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">'
+    svgEnd = '</svg>'
+    svgDoc = parser.parseFromString [svgStart, svgText, svgEnd].join(''),
+                                    'image/svg+xml'
+    document = @dom.ownerDocument
+    for node in svgDoc.rootElement.childNodes
+      if node.nodeType == Node.ELEMENT_NODE
+        @dom.appendChild document.importNode(node)
+    @dom.lastNode
+
+  # Fast insertRawSvg implementation broken in today's W3C standard + browsers.
+  insertRawSvg2: (svgText) ->
+    #   Chrome: http://crbug.com/107982
+    #   Firefox: https://bugzilla.mozilla.org/show_bug.cgi?id=711821
     range = @dom.ownerDocument.createRange()
-    range.selectNode @dom.ownerDocument.body
-    newDom = range.createContextualFragment xml
+    range.selectNodeContents @dom
+    newDom = range.createContextualFragment svgText
     @dom.appendChild newDom
-    new PwnvgElement newDom
+    @dom.lastChild
 
   # Helper for building a path data string.
   #
@@ -191,7 +209,11 @@ class Pwnvg extends PwnvgContainer
   # @param maxY bottom of the SVG coordinate system
   constructor: (domContainer, @minX, @minY, @maxX, @maxY) ->
     newDom = document.createElementNS 'http://www.w3.org/2000/svg', 'svg'
-    newDom.setAttribute 'version', '1.1'
+    newDom.setAttributeNS null, 'version', '1.1'
+    newDom.setAttributeNS 'http://www.w3.org/2000/xmlns/', 'xmlns:xlink',
+                          'http://www.w3.org/1999/xlink'
+    newDom.setAttributeNS 'http://www.w3.org/2000/xmlns/', 'xmlns',
+                          'http://www.w3.org/2000/svg'
     super newDom
     @viewBox @minX, @minY, @maxX, @maxY
     domContainer.appendChild newDom
