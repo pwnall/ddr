@@ -1,8 +1,8 @@
 # Shows the notes that the player must play.
-class PlayerControlsView
-  constructor: (@show, @domRoot) ->
-    @player = @show.player
-    @displayNotes = @show.song.style.display[@show.sheetIndex]
+class PlayerCoverView
+  constructor: (@cover, @domRoot) ->
+    @player = @cover.player
+    @displayNotes = @cover.song.style.display[@cover.sheetIndex]
     
     # Note widths and heights are hard-coded to 100 units.
     @trackPadding = 20  # Padding for each vertical "track" for notes.
@@ -10,7 +10,8 @@ class PlayerControlsView
 
     @computeLayout()
     @createNoteSymbols()
-    @renderGuides()    
+    @renderGuides()
+    @sheetView = new SheetView @svg, @
 
   # Computes the note sheet layout and creates the root SVG element.      
   computeLayout: ->
@@ -36,4 +37,4 @@ class PlayerControlsView
   renderGuides: ->
     @guideNotes = for displayNote, i in @displayNotes
       @svg.use('#note-' + displayNote.display, @noteX[i], 0, 100, 100).
-           id("player-#{@show.stageIndex}-guide-#{i}")
+           id("player-#{@cover.stageIndex}-guide-#{i}")

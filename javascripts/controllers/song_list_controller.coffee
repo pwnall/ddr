@@ -1,4 +1,4 @@
-# Helps the player select a song to play.
+# Helps the player select a song to cover.
 class SongListController
   constructor: (view) ->
     null

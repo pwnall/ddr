@@ -17,7 +17,7 @@
         src="style_def.jsonp?id=<%= @song[:style] %>&callback=onSongStyleDef">
     </script>
   </head>
-  <body id="game-view">
+  <body id="show-view">
     <header>
       <p class="song-header-generic">
         <span class="song-header-title">Song name</span>
@@ -34,14 +34,14 @@
         1 player
       </p>
     </header>
-    <article class="show-arena">
+    <article class="show-stage">
     </article>
     <footer>
       <p>Control help here</p>
     </footer>
 
-    <script type="text/html" id="player-show-view">
-      <section class="player-show-arena">
+    <script type="text/html" id="player-stage-view">
+      <section class="player-stage-view">
         <aside class="player-score-area">
           <span class="player-name">
             
@@ -50,7 +50,7 @@
             0
           </span>
         </aside>
-        <section class="player-controls-area">
+        <section class="player-cover-view">
         </section>
       </section>
     </script>

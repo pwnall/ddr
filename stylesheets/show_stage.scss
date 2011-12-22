@@ -1,4 +1,4 @@
-body#game-view {
+body#show-view {
   background: hsl(60deg, 0%, 0%);
   
   header, footer {
@@ -7,11 +7,11 @@ body#game-view {
 }
 
 
-article.show-arena {
+article.show-stage {
   @include flexbox-rubber-child;
   @include horizontal-flexbox;
 
-  > section.player-show-arena {
+  > section.player-stage-view {
     @include flexbox-rubber-child;
     @include vertical-flexbox;
     
@@ -29,7 +29,7 @@ article.show-arena {
         font-family: monospace;
       }
     }
-    > section.player-controls-area {
+    > section.player-cover-view {
       @include flexbox-rubber-child;
       @include flexbox;
 
