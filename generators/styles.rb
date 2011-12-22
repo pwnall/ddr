@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Usage:
-#   bundle exec generators/notes.rb
+#   bundle exec generators/styles.rb
 
 require 'rubygems'
 require 'json'
@@ -49,9 +49,9 @@ class StyleDef
   end
 end
 
-Dir['public/notes/defs/*.raw.json'].each do |source|
+Dir['public/styles/defs/*.raw.json'].each do |source|
   style_def = StyleDef.new JSON.parse(File.read(source)), source
-  style_def.embed_images 'public/notes'
+  style_def.embed_images 'public/styles/notes'
 
   target = source.sub /\.raw\.json$/, '.json'
   File.open(target, 'w') { |f| JSON.dump style_def.as_json, f }

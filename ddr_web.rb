@@ -49,7 +49,7 @@ class DdrWeb < Sinatra::Application
   get '/style_def.jsonp' do
     cb = params['callback'] || 'onJsonp'
     # gsub kills path manipulation.
-    json = File.read("public/notes/defs/#{params[:id].gsub('/', '')}.json")
+    json = File.read("public/styles/defs/#{params[:id].gsub('/', '')}.json")
     "#{cb}(#{json});"
   end
   

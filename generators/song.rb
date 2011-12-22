@@ -175,50 +175,57 @@ class SmSong
           measure_data.each_with_index do |row_data, row|
             beat = measure * 4 + (row * 4 / measure_data.length.to_f)
             row_data.each_with_index do |note_type, note_index|
+              note = nil
               case note_type
               when '0'
                 # Nothing.
               when '1'
                 # Tap.
-                note = { :number => note_index, :type => :tap,
-                         :start_beat => beat }
-                notes << note
+                note = { :type => :tap }
               when '2'
                 # Start hold.
                 hold_starts[note_index] = beat
               when '3'
                 # End hold.
-                note = { :number => note_index, :type => :hold,
-                         :start_beat => hold_starts[note_index],
-                         :end_beat => beat }
-                notes << note
+                note = { :type => :hold,
+                         :start_beat => hold_starts[note_index] }
               when '4'
                 # Roll.
                 raise 'Rolls not yet implemented'
               when 'M'
                 # Mine.
-                note = { :number => note_index, :type => :mine,
-                         :start_beat => beat }
-                notes << note
+                note = { :type => :mine }
               when 'L'
                 raise 'Lifts not yet implemented'
               else
                 # Special tap.
-                note = { :number => note_index, :type => :tap,
-                         :start_beat => beat, :tap_note => note_type }
-                notes << note
+                note = { :type => :tap, :tap_note => note_type }
               end
+              
+              next unless note
+              note[:start_beat] ||= beat
+              note[:end_beat] ||= beat
+              note[:notes] ||= [note_index]
+              notes << note
             end
           end
         end
         
-        # Coalesce notes.
+        # Coalesce notes into chords.
         notes.sort_by! do |note|
-          [note[:start_beat], note[:end_beat] || note[:start_beat],
-           note[:number]]
+          [note[:start_beat], note[:end_beat],note[:notes]]
         end
+        chords = []
+        notes.each_index do |i|
+          if i == 0 || notes[i - 1].values_at(:start_beat, :end_beat) !=
+                       notes[i].values_at(:start_beat, :end_beat)
+            chords << notes[i]
+          else
+            chords.last[:notes] += notes[i][:notes]
+          end
+        end
+        sheet[:chords] = notes
         
-        sheet[:notes] = notes
         @sheets << sheet
       end
     end
