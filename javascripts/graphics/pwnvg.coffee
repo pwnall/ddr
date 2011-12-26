@@ -145,7 +145,7 @@ class PwnvgContainer extends PwnvgElement
   group: ->
     newDom = document.createElementNS 'http://www.w3.org/2000/svg', 'g'
     @dom.appendChild newDom
-    new PwnvgContainer newDom
+    new PwnvgGroup newDom
     
   # Instantiates a previously defined object.
   use: (uri, x, y, width, height) ->
@@ -197,6 +197,25 @@ class PwnvgContainer extends PwnvgElement
   @path: ->
     new PwnvgPathBuilder
 
+# Wraps an SVG <g> element.
+class PwnvgGroup extends PwnvgContainer
+  # Appends a translation to the SVG element's transform attribute.
+  translate: (dx, dy) ->
+    @appendTransform "translate(#{dx} #{dy})"
+
+  # Removes all the transformations from the SVG element's transform attribute.
+  resetTransform: ->
+    @dom.deleteAttribute 'transform'
+    @
+
+  # Appends raw transformation text to the SVG element's "transform property".
+  appendTransform: (text) ->
+    oldValue = @dom.getAttribute('transform')
+    if oldValue
+      @dom.setAttribute 'transform', [oldValue, ' ', text].join('')
+    else
+      @dom.setAttribute 'transform', text
+    @
 
 # Wraps a <svg> element.
 class Pwnvg extends PwnvgContainer

@@ -17,8 +17,8 @@ class Song
     @style = {}
     @style.notes = for jsonNote in jsonData.notes
       {
-        player: jsonNote.player - 1,
-        display: jsonNote.position - 1,
+        player: jsonNote.player,
+        display: jsonNote.position,
         image: jsonData.images[jsonNote.image]
       }
       
@@ -67,7 +67,7 @@ class Song
         high + (time - @beatPause[high]) * @beatBpm[high] / 60.0
     else
       high + time * @beatBpm[high] / 60.0
-    
+  
   # Processes the data pertaining to synchronizing chords to the audio file.
   loadSyncData: (data) ->
     @rawBpms = data.bpms
@@ -122,10 +122,15 @@ class Song
 
   # Process the chords from the sheet's JSON data. 
   loadChords: (rawChords) ->
-    @chords = []
-    for chord in rawChords
-      chord.index = @chords.length
-      @chords.push chord
+    @chords = for rawChord, index in rawChords
+      {
+        startBeat: rawChord.start_beat,
+        endBeat: rawChord.end_beat,
+        type: rawChord.type,
+        player: rawChord.player,
+        notes: rawChord.notes,
+        index: index
+      }
     
   # Singleton instance.
   @singleton = null

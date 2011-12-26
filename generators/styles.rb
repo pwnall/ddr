@@ -12,6 +12,14 @@ class StyleDef
   def initialize(json_data, input_path)
     @data = json_data
     @data['id'] = File.basename(input_path).split('.', 2).first
+    
+    # Switch from 1-based indexing to 0-based indexing.
+    @data['notes'] = @data['notes'].map do |note|
+      note = note.dup
+      note['player'] -= 1
+      note['position'] -= 1
+      note
+    end
   end
   
   # Inlines the bodies of the SVG note images into the style definition.

@@ -3,24 +3,31 @@ class PlayerCoverView
   constructor: (@cover, @domRoot) ->
     @player = @cover.player
     @displayNotes = @cover.song.style.display[@cover.sheetIndex]
+    @chords = @cover.song.chords
     
     # Note widths and heights are hard-coded to 100 units.
-    @trackPadding = 20  # Padding for each vertical "track" for notes.
-    @sheetHeight = 20  # Number of notes that fit on a track, vertically.  
+    @metrics = {
+      trackPadding: 20,  # Padding for each vertical "track" for notes.
+      beats: 32,  # Number of beats that fit on the sheet.
+      beatHeight: 250,  # Height that a note travels during a beat.
+    }
 
     @computeLayout()
     @createNoteSymbols()
     @renderGuides()
-    @sheetView = new SheetView @svg, @cover
+    
+    @chordsWindow = new CoverChordsWindow @cover
+    @chordSvgs = {}
+    @setTime 0
 
   # Computes the note sheet layout and creates the root SVG element.      
   computeLayout: ->
     # The sheet gets one vertical track for each arrow. 
-    width = @displayNotes.length * (100 + 2 * @trackPadding)
+    width = @displayNotes.length * (100 + 2 * @metrics.trackPadding)
     @noteX = for displayNote, i in @displayNotes
-      @trackPadding + i * (100 + 2 * @trackPadding)
+      @metrics.trackPadding + i * (100 + 2 * @metrics.trackPadding)
     
-    height = 100 * @sheetHeight
+    height = @metrics.beatHeight * @metrics.beats
     @svg = new Pwnvg @domRoot, 0, 0, width, height
     
   # Define SVG symbols for all notes.
@@ -38,3 +45,23 @@ class PlayerCoverView
     @guideNotes = for displayNote, i in @displayNotes
       @svg.use('#note-' + displayNote.display, @noteX[i], 0, 100, 100).
            id("player-#{@cover.stageIndex}-guide-#{i}")
+
+  # Updates the displayed sheet to reflect a change in the playback time.
+  setTime: (newTime) ->
+    beat = @cover.song.beatAtTime newTime
+    deadChords = @chordsWindow.removeChords beat - 1
+    for chord in deadChords
+      @chordSvgs[chord].remove()
+      delete @chordSvgs[chord]
+    
+    # TODO(pwnall): update existing chords
+    
+    newChords = @chordsWindow.addChords beat + @metrics.beats
+    for chord in newChords
+      newSvg = @svg.group()
+      newSvg.translate(0,
+          (@chords[chord].startBeat - beat) * @metrics.beatHeight)
+      for note in @chords[chord].notes
+        displayNote = @displayNotes[note].display
+        newSvg.use('#note-' + displayNote, @noteX[displayNote], 0, 100, 100)
+      @chordSvgs[chord] = newSvg

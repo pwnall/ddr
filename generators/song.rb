@@ -20,7 +20,11 @@ require 'zip/zip'
 # Unpacks a song.
 class SmSong
   # Empty data structures.
-  def initialize
+  #
+  # @param [String] style_defs_dir path to the sheet style definition JSONs
+  def initialize(style_defs_dir)
+    @style_defs_dir = style_defs_dir
+    
     @fs_data = {}
     
     @metadata = {}
@@ -160,8 +164,12 @@ class SmSong
               :freeze => radar_data[3],
               :air => radar_data[4]
             }
-          } 
+          }
         }}
+        
+        # Style def.
+        style_def = JSON.load File.read(
+            File.join(@style_defs_dir, sheet_style.to_s) + '.json')
         
         # Note sequence.
         table = table_text.split(",").map do |measure|
@@ -206,6 +214,7 @@ class SmSong
               note[:start_beat] ||= beat
               note[:end_beat] ||= beat
               note[:notes] ||= [note_index]
+              note[:player] = style_def['notes'][note_index]['player']
               notes << note
             end
           end
@@ -213,12 +222,13 @@ class SmSong
         
         # Coalesce notes into chords.
         notes.sort_by! do |note|
-          [note[:start_beat], note[:end_beat],note[:notes]]
+          [note[:start_beat], note[:end_beat], note[:player], note[:notes]]
         end
         chords = []
         notes.each_index do |i|
-          if i == 0 || notes[i - 1].values_at(:start_beat, :end_beat) !=
-                       notes[i].values_at(:start_beat, :end_beat)
+          if i == 0 ||
+              notes[i - 1].values_at(:start_beat, :end_beat, :player) !=
+              notes[i].values_at(:start_beat, :end_beat, :player)
             chords << notes[i]
           else
             chords.last[:notes] += notes[i][:notes]
@@ -252,7 +262,7 @@ if ARGV.length != 1
 end
 
 # Parse input.
-song = SmSong.new
+song = SmSong.new 'public/styles/defs'
 song.parse_smzip File.expand_path(ARGV[0])
 
 # Create JSON data file.
