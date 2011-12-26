@@ -11,7 +11,7 @@ class PlayerCoverView
     @computeLayout()
     @createNoteSymbols()
     @renderGuides()
-    @sheetView = new SheetView @svg, @
+    @sheetView = new SheetView @svg, @cover
 
   # Computes the note sheet layout and creates the root SVG element.      
   computeLayout: ->
