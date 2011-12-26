@@ -49,29 +49,29 @@ class SmSong
   # Hash that obeys the JSON format restrictions.
   def as_json
     {
+      :audio => audio_as_json,
       :id => basename,
       :metadata => @metadata,
       :sheets => @sheets,
       :sync => {
         :bpms => @bpms,
         :breaks => @breaks 
-      },
-      :music => music_path
+      }
     }
   end
   
   # The song's index entry, as a hash that obeys the JSON format restrictions.
   def index_entry_as_json
     {
+      :audio => audio_as_json,
       :id => basename,
       :json => json_path,
-      :music => music_path,
       :metadata => @metadata,
+      :sheets => @sheets.map { |sheet| sheet[:metadata] },
       :sync => {
         :bpms => @bpms,
         :breaks => @breaks 
-      },
-      :sheets => @sheets.map { |sheet| sheet[:metadata] }
+      }
     }
   end
 
@@ -80,9 +80,18 @@ class SmSong
     "songs/#{basename}.json"
   end
   
-  # Path to the song's JSON file, relative to public/
-  def music_path
-    "songs/#{basename}.#{music_format}"
+  # The song's audio files, as an array that obeys the JSON format restrictions.
+  def audio_as_json
+    @media[:music].map do |entry|
+      { :path => audio_path(entry[:ext]), :mime => entry[:mime] }
+    end
+  end
+    
+  # Path to a song's audio file, relative to public/
+  #
+  # @param [String] ext the audio file's extension, e.g. "mp3"
+  def audio_path(ext)
+    "songs/#{basename}.#{ext}"
   end
 
   # Path to the song's entry file in the big index, relative to public/
@@ -90,14 +99,22 @@ class SmSong
     "songs/#{basename}.ndx-json"
   end
   
-  # Extension of the song's music file (most likely mp3).
-  def music_format
-    @media[:music].split('.').last.downcase
+  # Extensions of the song's audio files (most likely mp3).
+  def audio_formats
+    @media[:music].map { |entry| entry[:ext] }
   end
 
-  # Contents of the music file.  
-  def music_data
-    @fs_data[@media[:music_file]]
+  # Hash mapping the song's audio file paths.
+  #
+  # The hash keys represent the audio file paths relative to public/, and the
+  # values represent the paths inside the .smzip archive
+  def audio_paths
+    Hash[@media[:music].map { |entry| [audio_path(entry[:ext]), entry[:path]] }]
+  end
+
+  # Contents of a song audio file.  
+  def audio_data(smzip_path)
+    @fs_data[smzip_path]
   end
   
   # Root used by all the song's files.
@@ -130,7 +147,19 @@ class SmSong
         @metadata[:sample_length] = section.to_f
         
       when 'music'
-        @media[:music] = File.join(path, section)
+        @media[:music] ||= []
+        extension = section.split('.').last.downcase
+        case extension
+        when 'mp3'
+          mime = 'audio/mpeg'
+        when 'ogg'
+          mime = 'audio/ogg'
+        else
+          raise "Unrecognized audio format extension .#{extension}"
+        end
+        entry = { :path => File.join(path, section), :ext => extension,
+                  :mime => mime }
+        @media[:music] << entry 
 
       when 'offset'
         @breaks.unshift({ :beat => -1, :seconds => section.to_f })
@@ -271,10 +300,12 @@ File.open(File.join('public', song.json_path), 'w') do |f|
   JSON.dump song.as_json, f
 end
 
-# Create music file.
-FileUtils.mkpath File.join('public', File.dirname(song.music_path))
-File.open(File.join('public', song.music_path), 'wb') do |f|
-  f.write song.music_data
+# Create audio file.
+song.audio_paths.each do |fs_path, smzip_path|
+  FileUtils.mkpath File.join('public', File.dirname(fs_path))
+  File.open(File.join('public', fs_path), 'wb') do |f|
+    f.write song.audio_data(smzip_path)
+  end
 end
 
 # Create JSON index entry file.

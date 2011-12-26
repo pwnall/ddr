@@ -5,7 +5,7 @@ class Song
   # The song won't be usable until selectSheet is called.
   constructor: (jsonData) ->
     @metadata = jsonData.metadata
-    @musicUrl = jsonData.music    
+    @audio = jsonData.audio    
     @rawSheets = jsonData.sheets
     @loadSyncData jsonData.sync
 
