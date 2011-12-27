@@ -1,18 +1,16 @@
 # Keyboard input interface.
 class KeyboardInput
-  @gamepads = {}
-  
+  constructor: ->
+    window.addEventListener 'keydown', ((event) => @_onKeyDown event), false
+    window.addEventListener 'keyup', ((event) => @_onKeyUp event), false
+
+  _onKeyDown: (event) ->
+    key = event.key
+
+  _onKeyUp: (event) ->
+    key = event.key
+
   @initialize: ->
-    window.addEventListener 'MozGamepadConnected', @
+    @instance = new GamepadInput
 
-  @_onConnect: (event) ->
-    gamepad = event.gamepad
-    @gamepads[gamepad.id] = gamepad
-    console.log gamepad
-
-  @_onDisconnect: (event) ->
-    gamepad = event.gamepad
-    delete @gamepads[gamepad.id]
-    console.log ['removed', gamepad]
-
-GamepadInput.initialize()
+KeyboardInput.initialize()
