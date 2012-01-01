@@ -1,5 +1,5 @@
 # Instantiates the main controller and view for the page.
-window.onload = ->
+BootLdr.s.initializer 'page_controller', ['domload'], ->
   domRoot = document.querySelector('body')
   pageName = domRoot.getAttribute('id').replace(/\-view$/, '')
   pageNameBits = for bit in pageName.split('-')
@@ -13,3 +13,4 @@ window.onload = ->
 
   window.view = new viewClass domRoot
   window.controller = new controllerClass view
+  

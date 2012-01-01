@@ -21,7 +21,4 @@ class GamepadInput
     delete @gamepads[gamepad.id]
     console.log ['removed', gamepad]
 
-  @initialize: ->
-    @instance = new GamepadInput
-  
-GamepadInput.initialize()
+Controls.s.addInput new GamepadInput

@@ -1,6 +1,8 @@
 # Keyboard input interface.
 class KeyboardInput
   constructor: ->
+    @name = 'keyboard'
+    
     window.addEventListener 'keydown', ((event) => @_onKeyDown event), false
     window.addEventListener 'keyup', ((event) => @_onKeyUp event), false
 
@@ -9,8 +11,5 @@ class KeyboardInput
 
   _onKeyUp: (event) ->
     key = event.key
-
-  @initialize: ->
-    @instance = new GamepadInput
-
-KeyboardInput.initialize()
+    
+Controls.s.addInput new KeyboardInput

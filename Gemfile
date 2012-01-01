@@ -10,8 +10,8 @@ end
 group :chat do
   gem 'activesupport', '>= 3.1.0'
   gem 'i18n'
-  gem 'em-mongo', '>= 0.4.1'
-  gem 'em-websocket', '>= 0.3.5'
+  gem 'em-mongo', '>= 0.4.2'
+  gem 'em-websocket', '>= 0.3.6'
   gem 'eventmachine', '>= 0.12.10'
 end
 
@@ -21,7 +21,7 @@ group :chat_db do
 end
 
 group :web do
-  gem 'sinatra', '>= 1.3.1'
+  gem 'sinatra', '>= 1.3.2'
   gem 'shotgun', '>= 0.9'
   gem 'unicorn', '>= 4.0.0'
 
