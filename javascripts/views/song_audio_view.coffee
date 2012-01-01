@@ -1,11 +1,14 @@
 # Renders the song's audio.
-class SongSoundView
+class SongAudioView
   constructor: (@song, @domRoot) ->
     @loaded = false
     @playing = false
     @completed = false
     
     @renderAudio()
+
+  play: ->
+    @audio.play()    
     
   # Creates the <audio> element representing the song.
   renderAudio: ->
@@ -25,7 +28,7 @@ class SongSoundView
     @loaded = true
     @playing = false
     @completed = false
-    @audio.play()
+    BootLdr.fireEvent 'song_audio_load'
 
   # Handles the <audio> element's 'ended' DOM event.
   onEnded: ->
@@ -40,3 +43,4 @@ class SongSoundView
   onPlaying: ->
     @playing = true
     
+BootLdr.event 'song_audio_load'

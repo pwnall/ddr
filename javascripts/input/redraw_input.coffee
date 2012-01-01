@@ -1,42 +1,37 @@
-# Calls listeners periodically, to redraw the views.
+# Triggers an event on every view redraw.
 class RedrawInput
+  # Creates a gamepad input source. Only one instance should be created.
   constructor: ->
-    @listeners = []
+    @name = 'vsync'
+    @sink = null  # Filled in by setSink() 
     @started = false
     @raf = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
            window.webkitRequestAnimationFrame
-    @handler = ((time) => @onAnimationFrame time)
-  
-  # Starts calling listeners periodically.
-  start: ->
-    return if @started
-    @started = true
-    @raf @handler
+    @handler = ((time) => @_onAnimationFrame time)
     
-  # Stops calling listeners periodically.
+  # Sets the receiver of all input events.
+  setSink: (@sink) ->
+    null
+    
+  # Hooks into the redraw events and dispatches them to the sink.
+  start: ->
+    throw new Error "No event sink set" unless @sink
+
+    @started = true
+    # HACK(pwnall): should use @raf
+    @raf.call window, @handler
+    
+  # Stops dispatching redraw events to the sink, unhooks from them asap.
   stop: ->
-    return unless @started
     @started = false
     
-  # Adds a listener to be called on every redraw event.
-  #
-  # @param [function<Number>] listener will be called on every redraw event
-  addListener: (listener) ->
-    @listeners.push @listener
-    
-  # Removes all the redraw event listeners.
-  clearListeners: ->
-    @listeners = []
-  
   # Called by requestAnimationFrame.
-  onAnimationFrame: (time) ->
+  _onAnimationFrame: (time) ->
     return unless @started
-    for listener in @listeners
-      listener time
+    @sink.onInput { device: @name, time: time }
     # NOTE: checking @started again, because of event handlers
-    @raf @handler if @started
+    @raf.call window, @handler if @started
 
-  @initialize: ->
-    @instance = new GamepadInput
-
-RedrawInput.initialize()
+BootLdr.initializer 'controls_vsync', ['controls_base'], ->
+  Controls.addInput new RedrawInput
+BootLdr.dependsOn 'controls_vsync', 'controls_inputs'

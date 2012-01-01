@@ -9,7 +9,7 @@ class Show
   # This method assigns a stage position for the new player, as well as a group
   # of notes on the song's sheet.
   #
-  # @return [Cover] a new Cover instance representing the player's performance
+  # @return {Cover} a new Cover instance representing the player's performance
   addPlayer: (player) ->
     # Assign positions on the stage and sheet using round-robin.
     stageIndex = @covers.length

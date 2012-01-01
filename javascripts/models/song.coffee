@@ -38,8 +38,8 @@ class Song
       
   # Returns the beat at a time.
   # 
-  # @param [Number] time the time, expressed in seconds
-  # @return [Number] the beat number; can be negative and/or fractional
+  # @param {Number} time the time, expressed in seconds
+  # @return {Number} the beat number; can be negative and/or fractional
   beatAtTime: (time) ->
     # Binary search for the base beat.
     low = 0 
@@ -136,11 +136,18 @@ class Song
   @singleton = null
   
 # Callback for song data JSONP.
-window.onSongData = (jsonData) -> Song.singleton = new Song jsonData
+window.onSongData = (jsonData) ->
+  BootLdr.initializer 'song_base', [], -> Song.singleton = new Song jsonData
 
 # Callback for song chord (step) data JSONP.
-window.onSongStyleDef = (jsonData) -> Song.singleton.setSheetStyleDef jsonData
+window.onSongStyleDef = (jsonData) ->
+  BootLdr.initializer 'song_style', ['song_base'], ->
+    Song.singleton.setSheetStyleDef jsonData
 
 # Callback for song difficulty data JSONP.
 window.onSongDifficulty = (jsonData) ->
-  Song.singleton.selectSheet jsonData.steps, jsonData.style
+  BootLdr.initializer 'song_sheet', ['song_style'], ->
+    Song.singleton.selectSheet jsonData.steps, jsonData.style
+
+# Dummy initializer meaning that song data is available.
+BootLdr.initializer 'song', ['dom_load', 'song_sheet', 'song_style'], -> null

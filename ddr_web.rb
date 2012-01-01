@@ -42,6 +42,7 @@ class DdrWeb < Sinatra::Application
     cb = params['callback'] || 'onJsonp'
     # gsub kills path manipulation.
     json = File.read "public/songs/#{params[:id].gsub('/', '')}.json"
+    content_type 'application/javascript'
     "#{cb}(#{json});"
   end
   
@@ -50,14 +51,16 @@ class DdrWeb < Sinatra::Application
     cb = params['callback'] || 'onJsonp'
     # gsub kills path manipulation.
     json = File.read "public/styles/defs/#{params[:id].gsub('/', '')}.json"
+    content_type 'application/javascript'
     "#{cb}(#{json});"
   end
   
-  # Control bindings JSONP.
-  get '/bindings.jsonp' do
+  # Game preferences JSONP.
+  get '/prefs.jsonp' do
     cb = params['callback'] || 'onJsonp'
     # gsub kills path manipulation.
-    json = File.read "public/bindings.json"
+    json = File.read "public/prefs/#{params[:id].gsub('/', '')}.json"
+    content_type 'application/javascript'
     "#{cb}(#{json});"
   end
 

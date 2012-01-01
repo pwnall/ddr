@@ -2,7 +2,7 @@
 class PwnvgElement
   # Creates a wrapper around a SVG DOM element.
   #
-  # @param [DOMElement] dom the DOM element.
+  # @param {DOMElement} dom the DOM element.
   constructor: (@dom) ->
 
   # True if the element's class list includes the given argument.
@@ -168,7 +168,7 @@ class PwnvgContainer extends PwnvgElement
     
   # Parses a string containing a SVG fragment into this element's DOM tree.
   #
-  # Returns the last created DOM element.
+  # @return the last created DOM element.
   insertRawSvg: (svgText) ->
     parser = new DOMParser
     svgStart = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">'

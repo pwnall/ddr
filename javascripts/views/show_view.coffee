@@ -2,13 +2,17 @@
 class ShowView
   constructor: (@domRoot) ->
     @headerView = null
-    @soundView = null
+    @audioView = null
     @playerViews = []
 
   # Updates the view to reflect new song information.
   setSong: (@song) ->
     @headerView = new SongHeaderView @song, $D('header')
-    @soundView = new SongSoundView @song, $D('#song-sound-view')
+    @audioView = new SongAudioView @song, $D('#song-audio-view')
+    
+  # Starts playing the song.
+  startSong: (@song) ->
+    @audioView.play()
 
   # Updates the view to reflect the addition of a player.
   #

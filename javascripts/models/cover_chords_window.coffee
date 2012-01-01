@@ -2,7 +2,7 @@
 class CoverChordsWindow
   # Creates an empty sliding window positioned at the beginning of the song. 
   #
-  # @param [Cover] cover the cover of the player whose chords will be tracked
+  # @param {Cover} cover the cover of the player whose chords will be tracked
   constructor: (@cover) ->
     @chords = @cover.song.chords
     @sheetIndex = @cover.sheetIndex
