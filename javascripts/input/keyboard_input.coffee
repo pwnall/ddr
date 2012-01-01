@@ -3,6 +3,7 @@ class KeyboardInput
   constructor: ->
     @name = 'keyboard'
     
+  start: ->
     window.addEventListener 'keydown', ((event) => @_onKeyDown event), false
     window.addEventListener 'keyup', ((event) => @_onKeyUp event), false
 
@@ -12,4 +13,6 @@ class KeyboardInput
   _onKeyUp: (event) ->
     key = event.key
     
-Controls.s.addInput new KeyboardInput
+BootLdr.initializer 'controls_keyboard', ['controls_base'], ->
+  Controls.addInput new KeyboardInput
+BootLdr.dependsOn 'controls_keyboard', 'controls_inputs'

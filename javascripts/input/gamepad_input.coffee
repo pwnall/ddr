@@ -1,7 +1,9 @@
 # Gamepad input interface.
 class GamepadInput
   constructor: ->
-    gamepads = {}
+    @name = 'gamepad'
+    
+  start: ->
     window.addEventListener 'GamepadConnected', ((event) => @_onConnect event),
                             false
     window.addEventListener 'GamepadDisconnected',
@@ -21,4 +23,6 @@ class GamepadInput
     delete @gamepads[gamepad.id]
     console.log ['removed', gamepad]
 
-Controls.s.addInput new GamepadInput
+BootLdr.initializer 'controls_gamepad', ['controls_base'], ->
+  Controls.addInput new GamepadInput
+BootLdr.dependsOn 'controls_gamepad', 'controls_inputs'

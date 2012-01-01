@@ -1,5 +1,5 @@
 # Information about all the inputs in the game.
-class Controls
+class ControlsClass
   # Creates the game's control center.
   #
   constructor: ->
@@ -7,7 +7,14 @@ class Controls
 
   # Parses the game's control information from a JSON object.
   #
-  # @param {Object} controlSchema JSON object describing the game's controls
+  # @param {Object} jsonSchema JSON object describing the game's controls
+  setSchema: (jsonSchema) ->
+    @reset()
+    @loadSchema jsonSchema
+
+  # Parses the game's control information from a JSON object.
+  #
+  # @param {Object} jsonSchema JSON object describing the game's controls
   loadSchema: (jsonSchema) ->
     for jsonControl in jsonSchema
       id = jsonControl.id
@@ -34,70 +41,17 @@ class Controls
 
     @bindings = []
     
-# Controls is a singleton.
-Controls.s = new Controls
-    
+Controls = null  # Filled in by initializer.
+BootLdr.initializer 'controls_base', [], ->
+  Controls = new ControlsClass  # Singleton.
+  window.Controls = Controls  # Export.
 
-# JSON array listing the key bindings in the game.
-bindings = [
-  {
-    'control': 'start',    
-    'device': 'keyboard',
-    'button': '\\',
-    'player': null
-  },
-  {
-    'control': 'pause',
-    'device': 'keyboard',
-    'button': ' ',
-    'player': null
-  },
-  {
-    'control': 'up',
-    'device': 'keyboard',
-    'button': 'w',
-    'player': 0
-  },
-  {
-    'control': 'down',
-    'device': 'keyboard',
-    'button': 's',
-    'player': 0
-  },
-  {
-    'control': 'left',
-    'device': 'keyboard',
-    'button': 'a',
-    'player': 0
-  },
-  {
-    'control': 'right',
-    'device': 'keyboard',
-    'button': 'd',
-    'player': 0
-  },
-  {
-    'control': 'up',
-    'device': 'keyboard',
-    'button': 'i',
-    'player': 1
-  },
-  {
-    'control': 'down',
-    'device': 'keyboard',
-    'button': 'k',
-    'player': 1
-  },
-  {
-    'control': 'left',
-    'device': 'keyboard',
-    'button': 'j',
-    'player': 1
-  },
-  {
-    'control': 'right',
-    'device': 'keyboard',
-    'button': 'l',
-    'player': 1
-  }
-]
+# Dummy initializer meaning that all the inputs have been registered.  
+BootLdr.initializer 'controls_inputs', ['controls_base', 'dom_load'], -> null
+# Dummy initializer meaning that the input subsystem is ready.
+BootLdr.initializer 'controls', ['controls_bindings'], -> null
+
+# Callback for the bindings JSONP data.
+window.onControlBindings = (jsonBindings) ->
+  BootLdr.initializer 'controls_bindings', ['controls_schema',
+      'controls_inputs'], -> Controls.addBindings jsonBindings

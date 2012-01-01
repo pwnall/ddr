@@ -2,15 +2,17 @@
 #
 # This class must be loaded before everything else. Any other class may rely on
 # it for load ordering.
-class BootLdr
+class BootLdrClass
   # Creates an empty boot loader with no initializers.
   constructor: ->
     # Initializer functions.
     @functions = {}
     # Dependencies for each initializer.
     @deps = {}
+    # Counts the dependencies for each initializer. 
+    @depCount = {}
     # Counts the already satisfied dependencies for each initializer.
-    @doneDeps = {}
+    @completeDepCount = {}
     # The initializers that depend on each initializer / event.
     @reverseDeps = {}
     # Associates all the completed initializers / events to true.
@@ -45,17 +47,30 @@ class BootLdr
     @functions[name] = fn    
     @reverseDeps[name] ||= []
     
-    @doneDeps[name] = 0
-    @deps[name] = for dependency in dependencies
-      @reverseDeps[dependency] ||= []
-      @reverseDeps[dependency].push name
-      @doneDeps[name] += 1 if @completed[dependency]
-      dependency
+    @deps[name] ||= {}
+    @depCount[name] ||= 0
+    @completeDepCount[name] ||= 0
+    for dependency in dependencies
+      @_dependsOn dependency, name      
   
-    if @doneDeps[name] == @deps[name].length
+    if @completeDepCount[name] == @depCount[name]
       @ready.push name
       @_boot()
   
+  # Adds a dependency between initializers / events.
+  #
+  # @param {String} dependency name used to identify the event / initializer
+  # @return {Boolean} true if the dependency was added, or false if it was
+  #                   already recorded
+  dependsOn: (dependency, dependent) ->
+    unless @functions[dependent] and @functions[dependent] != true
+      throw new Error "Invalid initializer name #{dependent}"
+    
+    return if @deps[dependent][dependency]
+    if @completed[dependent]
+      throw new Error "Too late -- #{dependent} completed"
+    @_dependsOn dependency, dependent
+
   # Marks an event as fired, allowing initializers depending on it to run.
   #
   # @param {String} name used to identify the event in an earlier event() call
@@ -64,7 +79,17 @@ class BootLdr
       throw new Error "Invalid event name #{name}"
     @_completed name
     @_boot()
-  
+    
+  # Unchecked implementation of dependsOn(). Do not call directly.
+  _dependsOn: (dependency, dependent) ->
+    return false if @deps[dependent][dependency]
+    @depCount[dependent] += 1
+    @deps[dependent][dependency] = true
+    @reverseDeps[dependency] ||= []
+    @reverseDeps[dependency].push dependent
+    @completeDepCount[dependent] += 1 if @completed[dependency]
+    true
+    
   # Marks an event or function as completed.
   #
   # This method does not call any initializers that may become eligible to run.
@@ -73,8 +98,8 @@ class BootLdr
       throw new Error "Initializer / event #{name} completed twice?!"
     @completed[name] = true
     for next in @reverseDeps[name]
-      @doneDeps[next] += 1
-      if @doneDeps[next] == @deps[next].length
+      @completeDepCount[next] += 1
+      if @completeDepCount[next] == @depCount[next]
         @ready.push next
 
   # Executes initializers that are eligible to run.
@@ -92,8 +117,5 @@ class BootLdr
     finally
       @booting = false
 
-# BootLdr is a singleton.
-BootLdr.s = new BootLdr
-
-# Exports the class.
-window.BootLdr = BootLdr
+BootLdr = new BootLdrClass  # Singleton.
+window.BootLdr = BootLdr  # Export.

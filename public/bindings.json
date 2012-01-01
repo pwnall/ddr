@@ -1,0 +1,62 @@
+[
+  {
+    "control": "start",    
+    "device": "keyboard",
+    "button": "\\",
+    "player": null
+  },
+  {
+    "control": "pause",
+    "device": "keyboard",
+    "button": " ",
+    "player": null
+  },
+  {
+    "control": "up",
+    "device": "keyboard",
+    "button": "w",
+    "player": 0
+  },
+  {
+    "control": "down",
+    "device": "keyboard",
+    "button": "s",
+    "player": 0
+  },
+  {
+    "control": "left",
+    "device": "keyboard",
+    "button": "a",
+    "player": 0
+  },
+  {
+    "control": "right",
+    "device": "keyboard",
+    "button": "d",
+    "player": 0
+  },
+  {
+    "control": "up",
+    "device": "keyboard",
+    "button": "i",
+    "player": 1
+  },
+  {
+    "control": "down",
+    "device": "keyboard",
+    "button": "k",
+    "player": 1
+  },
+  {
+    "control": "left",
+    "device": "keyboard",
+    "button": "j",
+    "player": 1
+  },
+  {
+    "control": "right",
+    "device": "keyboard",
+    "button": "l",
+    "player": 1
+  }
+]
