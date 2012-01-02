@@ -4,6 +4,7 @@ class ShowView
     @headerView = null
     @audioView = null
     @playerViews = []
+    @beat = null
 
   # Updates the view to reflect new song information.
   setSong: (@song) ->
@@ -13,7 +14,7 @@ class ShowView
   # Starts playing the song.
   startSong: (@song) ->
     @audioView.play()
-
+    
   # Updates the view to reflect the addition of a player.
   #
   # @param [Cover] playerCover the player's song cover in this show
@@ -23,3 +24,10 @@ class ShowView
     viewDom = $E('article > section:last-child', @domRoot)
     @playerViews[playerCover.stageIndex] =
        new PlayerStageView playerCover, viewDom 
+
+  # Updates the view to reflect the change in the show's time.
+  #
+  # @param {Number} beat the (fractional) beat offset into the song's sheet
+  setSongBeat: (@beat) ->
+    for view in @playerViews
+      view.coverView.setSongBeat @beat

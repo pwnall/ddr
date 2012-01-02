@@ -3,6 +3,7 @@ class Show
   # Creates a show where all the players cover the given song.
   constructor: (@song) ->
     @covers = []
+    @time = null
     
   # Registers the identity of a player who will be covering the song.
   #
@@ -18,3 +19,9 @@ class Show
     @covers.push cover
     cover
     
+  # Updates the show's time offset.
+  #
+  # @param {Number} beat the (fractional) beat offset into the song's sheet
+  setSongBeat: (@beat) ->
+    for cover in @covers
+      cover.setSongBeat @beat

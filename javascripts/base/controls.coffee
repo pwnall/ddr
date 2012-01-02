@@ -43,9 +43,9 @@ class ControlsClass
   # @param {String, Number} player either a player number, or one of the strings
   #     'global' (events with no specific player) and 'tick' (timer)
   # @param {Function<Number>} listener will be called on every redraw event
-  addListener: (player, fn) ->
+  addListener: (player, listener) ->
     @listeners[player] ||= []
-    @listeners[player].push @listener
+    @listeners[player].push listener
   
   # Parses the game's control information from a JSON object.
   #
@@ -78,11 +78,14 @@ class ControlsClass
     @bindings = {}
     for name, device of @devices
       @bindings[name] = {}
+    null
 
   # Calls a sequence of listeners.
   _callListeners: (listenerArray, event) ->
+    return unless listenerArray
     for listener in listenerArray
       listener event
+    null
     
 Controls = null  # Filled in by initializer.
 BootLdr.initializer 'controls_base', [], ->

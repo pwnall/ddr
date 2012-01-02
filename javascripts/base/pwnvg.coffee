@@ -205,7 +205,7 @@ class PwnvgGroup extends PwnvgContainer
 
   # Removes all the transformations from the SVG element's transform attribute.
   resetTransform: ->
-    @dom.deleteAttribute 'transform'
+    @dom.removeAttribute 'transform'
     @
 
   # Appends raw transformation text to the SVG element's "transform property".

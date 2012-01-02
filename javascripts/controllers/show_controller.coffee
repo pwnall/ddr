@@ -1,6 +1,7 @@
 # Coordinates a show consisting of multiple players covering the same song.
 class ShowController
   constructor: (@view) ->
+    @beat = null
 
   # Called when all the song data has been loaded.
   setSong: (@song) ->
@@ -14,6 +15,9 @@ class ShowController
 
   # Starts the show, by starting the song.
   start: ->
+    @show.setSongBeat 0
+    @view.setSongBeat 0
+    Controls.addListener 'tick', => @onTick()
     @view.startSong()
 
   # Adds a player to the show.
@@ -21,6 +25,15 @@ class ShowController
     cover = @show.addPlayer(player)
     @view.addedPlayer cover
     cover
+  
+  # Called right before the browser refreshes the views.
+  onTick: ->
+    time = @view.audioView.audioTime()
+    beat = @song.beatAtTime time
+    return if @beat == beat
+    @beat = beat
+    @show.setSongBeat beat
+    @view.setSongBeat beat
 
 BootLdr.initializer 'show_controller_song', ['page_controller', 'song'], ->
   window.controller.setSong Song.singleton

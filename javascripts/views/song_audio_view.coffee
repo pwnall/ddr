@@ -8,7 +8,13 @@ class SongAudioView
     @renderAudio()
 
   play: ->
-    @audio.play()    
+    @audio.play()
+    
+  # The time offset in the song's playback.
+  #
+  # @return {Number} the number of seconds into the song
+  audioTime: ->
+    @audio.currentTime || 0
     
   # Creates the <audio> element representing the song.
   renderAudio: ->

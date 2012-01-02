@@ -2,7 +2,7 @@
 class PlayerStageView
   constructor: (@cover, @viewDom) ->
     coverDom = $E('section.player-cover-view', @viewDom)
-    @controlsView = new PlayerCoverView @cover, coverDom
+    @coverView = new PlayerCoverView @cover, coverDom
     
     @setPlayer @cover.player
     

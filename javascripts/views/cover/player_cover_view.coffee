@@ -8,7 +8,7 @@ class PlayerCoverView
     # Note widths and heights are hard-coded to 100 units.
     @metrics = {
       trackPadding: 20,  # Padding for each vertical "track" for notes.
-      beats: 32,  # Number of beats that fit on the sheet.
+      beats: 4,  # Number of beats that fit on the sheet.
       beatHeight: 250,  # Height that a note travels during a beat.
     }
 
@@ -18,7 +18,6 @@ class PlayerCoverView
     
     @chordsWindow = new CoverChordsWindow @cover
     @chordSvgs = {}
-    @setTime 0
 
   # Computes the note sheet layout and creates the root SVG element.      
   computeLayout: ->
@@ -46,22 +45,23 @@ class PlayerCoverView
       @svg.use('#note-' + displayNote.display, @noteX[i], 0, 100, 100).
            id("player-#{@cover.stageIndex}-guide-#{i}")
 
-  # Updates the displayed sheet to reflect a change in the playback time.
-  setTime: (newTime) ->
-    beat = @cover.song.beatAtTime newTime
+  # Updates the view to reflect the change in the show's time.
+  #
+  # @param {Number} beat the (fractional) beat offset into the song's sheet
+  setSongBeat: (beat) ->
     deadChords = @chordsWindow.removeChords beat - 1
     for chord in deadChords
       @chordSvgs[chord].remove()
       delete @chordSvgs[chord]
     
-    # TODO(pwnall): update existing chords
-    
     newChords = @chordsWindow.addChords beat + @metrics.beats
     for chord in newChords
       newSvg = @svg.group()
-      newSvg.translate(0,
-          (@chords[chord].startBeat - beat) * @metrics.beatHeight)
       for note in @chords[chord].notes
         displayNote = @displayNotes[note].display
         newSvg.use('#note-' + displayNote, @noteX[displayNote], 0, 100, 100)
       @chordSvgs[chord] = newSvg
+
+    for chord, svg of @chordSvgs
+      svg.resetTransform().translate 0,
+          (@chords[chord].startBeat - beat) * @metrics.beatHeight

@@ -18,3 +18,11 @@ class Cover
     }
 
     # TODO(pwnall): set up sheet-tracking state
+    
+    @scores = null for chord in @song.chords
+    
+  
+  # Updates the show's time offset.
+  #
+  # @param {Number} beat the (fractional) beat offset into the song's sheet
+  setSongBeat: (@beat) ->
