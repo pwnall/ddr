@@ -2,6 +2,7 @@
 class ShowController
   constructor: (@view) ->
     @beat = null
+    @started = false
 
   # Called when all the song data has been loaded.
   setSong: (@song) ->
@@ -15,6 +16,7 @@ class ShowController
 
   # Starts the show, by starting the song.
   start: ->
+    @started = true
     @show.setSongBeat 0
     @view.setSongBeat 0
     Controls.addListener 'tick', => @onTick()
@@ -23,7 +25,12 @@ class ShowController
   # Adds a player to the show.
   addPlayer: (player) ->
     cover = @show.addPlayer(player)
-    @view.addedPlayer cover
+    playerView = @view.addedPlayer cover
+    Controls.addListener cover.stageIndex, (event) ->
+      note = event.binding.data.note
+      noteStarted = event.buttonDown
+      cover.playedNote note, noteStarted if @started
+      playerView.addPlayedNote note, noteStarted
     cover
   
   # Called right before the browser refreshes the views.

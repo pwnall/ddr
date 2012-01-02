@@ -3,6 +3,7 @@ class PlayerCoverView
   constructor: (@cover, @domRoot) ->
     @player = @cover.player
     @displayNotes = @cover.song.style.display[@cover.sheetIndex]
+    @sheetNotes = (note.display for note in @cover.song.style.notes)
     @chords = @cover.song.chords
     
     # Note widths and heights are hard-coded to 100 units.
@@ -65,3 +66,20 @@ class PlayerCoverView
     for chord, svg of @chordSvgs
       svg.resetTransform().translate 0,
           (@chords[chord].startBeat - beat) * @metrics.beatHeight
+
+  # Updates the view to reflect a player move.
+  #
+  # @param {Number} note the index of the note that is playing
+  # @param {Boolean} noteStarted if true, the player started playing the note,
+  #                              otherwise the player just stopped playing it
+  addPlayedNote: (note, startedNote) ->
+    console.log [note, startedNote]
+    
+    svg = @guideNotes[@sheetNotes[note]]
+    console.log @guideNotes
+    console.log @sheetNotes
+    console.log svg
+    if startedNote
+      svg.addClass 'playing'
+    else
+      svg.removeClass 'playing'

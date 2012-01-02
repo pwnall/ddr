@@ -15,25 +15,25 @@ BootLdr.initializer 'controls_schema', ['controls_base'], ->
       'id': 'left',
       'text': 'Left',
       'global': false,
-      'data': { 'displayNote': 0 }
+      'data': { 'note': 0 }
     },
     {
       'id': 'right', 
       'text': 'Right',
       'global': false,
-      'data': { 'displayNote': 3 }
+      'data': { 'note': 3 }
     },
     {
       'id': 'up',
       'text': 'Up',
       'global': false,
-      'data': { 'displayNote': 1 }
+      'data': { 'note': 1 }
     },
     {
       'id': 'down',
       'text': 'Down',
       'global': false,
-      'data': { 'displayNote': 2 }
+      'data': { 'note': 2 }
     }
   ]
   Controls.setSchema controlSchema

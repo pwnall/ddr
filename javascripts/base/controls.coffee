@@ -16,15 +16,24 @@ class ControlsClass
   # Extends the control bindings table with the bindings in a JSON object.   
   addBindings: (jsonBindings) ->
     for jsonBinding in jsonBindings
-      binding = { action: jsonBindings.action }
+      action = jsonBinding.action
 
-      if jsonBinding.player
-        binding.player = jsonBinding.player 
+      if jsonBinding.player != null
+        player = jsonBinding.player
+        schema = @playerSchema
       else
-        binding.player = 'global'
+        player = 'global'
+        schema = @globalSchema
+      unless schema[action]
+        if player == 'global'
+          throw new Error "Binding action not in global schema - #{action}"
+        else
+          throw new Error "Binding action not in player schema - #{action}"
+
+      binding = { action: action, player: player, data: schema[action].data }
       
       device = jsonBinding.device
-      button = jsonBinding.button.toLowerCase()
+      button = jsonBinding.button.toUpperCase()
       @bindings[device] ||= {}
       @bindings[device][button] = binding
 
@@ -57,11 +66,12 @@ class ControlsClass
         throw new Error "Duplicate id #{id} in control schema"
       @controlTexts[id] = jsonControl.text
       schema = if jsonControl.global then @globalSchema else @playerSchema
-      control = { index: schema.length, id: id, data: jsonControl.global }
+      schema[id] = { index: schema.length, id: id, data: jsonControl.data }
     
   # Processes an input event and routes it.
   onInput: (event) ->
     return unless binding = @bindings[event.device][event.button]
+    event.binding = binding
     # TODO(pwnall): update control state
     @_callListeners @listeners[binding.player], event
 
@@ -71,8 +81,8 @@ class ControlsClass
     
   # Resets all control information.
   reset: ->
-    @globalSchema = []
-    @playerSchema = []
+    @globalSchema = {}
+    @playerSchema = {}
     @controlTexts = {}
 
     @bindings = {}

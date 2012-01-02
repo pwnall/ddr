@@ -10,3 +10,10 @@ class PlayerStageView
   setPlayer: (@player) ->
     $E('.player-name', @viewDom).textContent = player.name 
     
+  # Updates the view to reflect a player move.
+  #
+  # @param {Number} note the index of the note that is playing
+  # @param {Boolean} noteStarted if true, the player started playing the note,
+  #                              otherwise the player just stopped playing it
+  addPlayedNote: (note, noteStarted) ->
+    @coverView.addPlayedNote note, noteStarted
