@@ -3,6 +3,7 @@ class ControlsClass
   # Creates the game's control center.
   constructor: ->
     @drivers = {}
+    @listeners = {global: [], tick: []}
     @reset()
 
   # Initializes or replaces the game's control information.
@@ -15,7 +16,17 @@ class ControlsClass
   # Extends the control bindings table with the bindings in a JSON object.   
   addBindings: (jsonBindings) ->
     for jsonBinding in jsonBindings
-      null
+      binding = { action: jsonBindings.action }
+
+      if jsonBinding.player
+        binding.player = jsonBinding.player 
+      else
+        binding.player = 'global'
+      
+      driver = jsonBinding.device
+      button = jsonBinding.button.toLowerCase()
+      @bindings[driver] ||= {}
+      @bindings[driver][button] = binding
 
   # Registers a source of input signals.
   addInput: (driver) ->
@@ -32,8 +43,8 @@ class ControlsClass
   #     'global' (events with no specific player) and 'tick' (timer)
   # @param {Function<Number>} listener will be called on every redraw event
   addListener: (player, fn) ->
-    @listeners.push @listener
-      
+    @listeners[player] ||= []
+    @listeners[player].push @listener
   
   # Parses the game's control information from a JSON object.
   #
@@ -49,10 +60,11 @@ class ControlsClass
     
   # Processes an input event and routes it.
   onInput: (event) ->
+    
 
   # Processes a timer tick event and routes it.
   onTick: (event) ->
-    
+    @_callListeners @listeners['tick'], event
     
   # Resets all control information.
   reset: ->
@@ -60,7 +72,12 @@ class ControlsClass
     @playerSchema = []
     @controlTexts = {}
 
-    @bindings = []
+    @bindings = {}
+
+  # Calls a sequence of listeners.
+  _callListeners: (listenerArray, event) ->
+    for listener in listenerArray
+      listener event
     
 Controls = null  # Filled in by initializer.
 BootLdr.initializer 'controls_base', [], ->

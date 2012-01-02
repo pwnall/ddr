@@ -309,5 +309,4 @@ class PwnvgPathBuilder
     @command.join ''
 
 
-# Export the Pwnvg class.
-window.Pwnvg = Pwnvg
+window.Pwnvg = Pwnvg  # Export.
