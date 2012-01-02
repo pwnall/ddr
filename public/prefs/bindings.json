@@ -2,61 +2,61 @@
   {
     "action": "start",    
     "device": "keyboard",
-    "button": "\\",
+    "button": "ENTER",
     "player": null
   },
   {
     "action": "pause",
     "device": "keyboard",
-    "button": " ",
+    "button": "SPACE",
     "player": null
   },
   {
     "action": "up",
     "device": "keyboard",
-    "button": "w",
+    "button": "W",
     "player": 0
   },
   {
     "action": "down",
     "device": "keyboard",
-    "button": "s",
+    "button": "S",
     "player": 0
   },
   {
     "action": "left",
     "device": "keyboard",
-    "button": "a",
+    "button": "A",
     "player": 0
   },
   {
     "action": "right",
     "device": "keyboard",
-    "button": "d",
+    "button": "D",
     "player": 0
   },
   {
     "action": "up",
     "device": "keyboard",
-    "button": "i",
+    "button": "I",
     "player": 1
   },
   {
     "action": "down",
     "device": "keyboard",
-    "button": "k",
+    "button": "K",
     "player": 1
   },
   {
     "action": "left",
     "device": "keyboard",
-    "button": "j",
+    "button": "J",
     "player": 1
   },
   {
     "action": "right",
     "device": "keyboard",
-    "button": "l",
+    "button": "L",
     "player": 1
   }
 ]

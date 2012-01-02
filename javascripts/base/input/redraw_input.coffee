@@ -28,7 +28,7 @@ class RedrawInput
   # Called by requestAnimationFrame.
   _onAnimationFrame: (time) ->
     return unless @started
-    @sink.onInput { device: @name, time: time }
+    @sink.onTick { device: @name, time: time }
     # NOTE: checking @started again, because of event handlers
     @raf.call window, @handler if @started
 

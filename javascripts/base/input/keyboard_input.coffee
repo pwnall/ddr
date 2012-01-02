@@ -26,8 +26,17 @@ class KeyboardInput
     
   # Creates and dispatches a key input event.
   _onKey: (event, isKeyDown) ->
-    event = { device: @name, button: event.key, buttonDown: isKeyDown }
-    @sink.onEvent 
+    if event.key
+      button = event.key.toLowerCase()
+    else if event.keyIdentifier and event.keyIdentifier.substring(0, 2) != 'U+'
+      button = event.keyIdentifier.toUpperCase()
+    else
+      button = String.fromCharCode(event.keyCode).toUpperCase()
+      if button == ' '
+        button = 'SPACE'
+        
+    event = { device: @name, button: button, buttonDown: isKeyDown }
+    @sink.onInput event
     
 BootLdr.initializer 'controls_keyboard', ['controls_base'], ->
   Controls.addInput new KeyboardInput

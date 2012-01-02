@@ -2,7 +2,7 @@
 class ControlsClass
   # Creates the game's control center.
   constructor: ->
-    @drivers = {}
+    @devices = {}
     @listeners = {global: [], tick: []}
     @reset()
 
@@ -23,19 +23,20 @@ class ControlsClass
       else
         binding.player = 'global'
       
-      driver = jsonBinding.device
+      device = jsonBinding.device
       button = jsonBinding.button.toLowerCase()
-      @bindings[driver] ||= {}
-      @bindings[driver][button] = binding
+      @bindings[device] ||= {}
+      @bindings[device][button] = binding
 
   # Registers a source of input signals.
-  addInput: (driver) ->
-    if @drivers[driver.name]
+  addInput: (device) ->
+    if @devices[device.name]
       throw new Error "Already added input source #{name}"
 
-    @drivers[driver.name] = driver
-    driver.setSink @
-    driver.start()
+    @devices[device.name] = device
+    @bindings[device.name] ||= {}
+    device.setSink @
+    device.start()
 
   # Adds a listener to be called on every redraw event.
   #
@@ -60,7 +61,9 @@ class ControlsClass
     
   # Processes an input event and routes it.
   onInput: (event) ->
-    
+    return unless binding = @bindings[event.device][event.button]
+    # TODO(pwnall): update control state
+    @_callListeners @listeners[binding.player], event
 
   # Processes a timer tick event and routes it.
   onTick: (event) ->
@@ -73,6 +76,8 @@ class ControlsClass
     @controlTexts = {}
 
     @bindings = {}
+    for name, device of @devices
+      @bindings[name] = {}
 
   # Calls a sequence of listeners.
   _callListeners: (listenerArray, event) ->
