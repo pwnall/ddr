@@ -38,6 +38,11 @@ article.show-stage {
         width: auto;
         height: auto;
         display: block;
+        
+        > use.playing {
+          -webkit-filter: hue-rotate(240);
+          filter: url("filters.svg#playing-note");
+        }
       }
     }
   }
