@@ -73,12 +73,7 @@ class PlayerCoverView
   # @param {Boolean} noteStarted if true, the player started playing the note,
   #                              otherwise the player just stopped playing it
   addPlayedNote: (note, startedNote) ->
-    console.log [note, startedNote]
-    
     svg = @guideNotes[@sheetNotes[note]]
-    console.log @guideNotes
-    console.log @sheetNotes
-    console.log svg
     if startedNote
       svg.addClass 'playing'
     else

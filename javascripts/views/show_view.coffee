@@ -13,7 +13,11 @@ class ShowView
     
   # Starts playing the song.
   startSong: (@song) ->
-    @audioView.play()
+    @audioView.playSong()
+    
+  # Pauses the song.
+  pauseSong: (@song) ->
+    @audioView.pauseSong()
     
   # Updates the view to reflect the addition of a player.
   #

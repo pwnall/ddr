@@ -7,8 +7,13 @@ class SongAudioView
     
     @renderAudio()
 
-  play: ->
-    @audio.play()
+  # Starts playing the song.
+  playSong: ->    
+    @audio.play() if @loaded and !@completed and !@playing 
+
+  # Pauses the song, if it is playing.
+  pauseSong: ->
+    @audio.pause() if @playing
     
   # The time offset in the song's playback.
   #

@@ -3,6 +3,7 @@ class ShowController
   constructor: (@view) ->
     @beat = null
     @started = false
+    @paused = false
 
   # Called when all the song data has been loaded.
   setSong: (@song) ->
@@ -14,6 +15,21 @@ class ShowController
     for jsonPlayer in jsonPlayers
       @addPlayer new Player(jsonPlayer.name)
 
+  # Called when the game initialization completes. Invites players to start.
+  ready: ->
+    Controls.addListener 'global', (event) =>
+      return if event.buttonDown
+      if event.binding.action == 'start' and !@started
+        @start()
+      if event.binding.action == 'pause' and @started
+        if @paused
+          @paused = false
+          @view.startSong()
+        else
+          @paused = true
+          @view.pauseSong()
+          
+  
   # Starts the show, by starting the song.
   start: ->
     @started = true
@@ -49,5 +65,6 @@ window.onPlayerData = (jsonPlayers) ->
   BootLdr.initializer 'show_controller_players', ['show_controller_song'], ->
     window.controller.setPlayers jsonPlayers
 
-BootLdr.initializer 'show_start', ['show_controller_players', 'controls',
-    'song_audio_load'], -> window.controller.start()
+BootLdr.initializer 'show_ready', ['show_controller_players', 'controls',
+    'song_audio_load'], -> window.controller.ready() 
+  
