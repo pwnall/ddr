@@ -36,6 +36,7 @@ class SongAudioView
 
   # Handles the <audio> element's 'canplaythrough' DOM event.
   onLoad: ->
+    return if @loaded
     @loaded = true
     @playing = false
     @completed = false

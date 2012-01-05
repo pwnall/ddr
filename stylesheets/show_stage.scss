@@ -40,10 +40,16 @@ article.show-stage {
         display: block;
         
         > use.playing {
-          -webkit-filter: hue-rotate(240);
-          filter: url("filters.svg#playing-note");
+          filter: url("#playing-note");
         }
       }
     }
   }
+}
+
+svg#filters-container {
+  width: 0;
+  height: 0;
+  display: block;
+  visibility: hidden;
 }
