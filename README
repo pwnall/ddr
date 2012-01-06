@@ -1,4 +1,4 @@
-SETUP
+APP SETUP
 ---
 
 1. Get Ruby, Rubygems, and bundler.
@@ -14,11 +14,23 @@ bundle exec shotgun config.ru
 nohup bundle exec unicorn config.ru > web.log &
 
 
+SONG SETUP
+---
+
+You need at least one song in your library to be able to play the game.
+
+1. Get the StepMania song.
+A good source is from http://www.stepmania.com/browse.php?sort=recent
+
+2. Convert the song.
+bundle exec generators/song.rb path/to/song.smzip 
+
+
 GAMEPAD SETUP
 ---
 
-Until the Gamepad API works, you'll need a joystick -> keyboard mapper. The
-steps below get you set on Ubuntu.
+Until the Gamepad API is implemented in browsers, you'll need a
+joystick -> keyboard mapper. The steps below get you set on Ubuntu.
 
 1. Get utilties.
 sudo apt-get install joystick joy2key
