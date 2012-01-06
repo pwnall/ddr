@@ -43,6 +43,11 @@ class ShowController
     cover = @show.addPlayer(player)
     playerView = @view.addedPlayer cover
     Controls.addListener cover.stageIndex, (event) =>
+      # NOTE: adjusting beat for precise note timing
+      time = @view.audioView.audioTime()
+      beat = @song.beatAtTime time
+      cover.setSongBeat beat unless @beat == beat
+      
       note = event.binding.data.note
       noteStarted = event.buttonDown
       cover.playedNote note, noteStarted if @started
