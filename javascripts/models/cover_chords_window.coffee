@@ -4,7 +4,8 @@ class CoverChordsWindow
   #
   # @param {Cover} cover the cover of the player whose chords will be tracked
   constructor: (@cover) ->
-    @chords = @cover.song.chords
+    @songChords = @cover.song.chords
+    @chordsArray = null
     @sheetIndex = @cover.sheetIndex
     
     @nextIn = 0
@@ -15,9 +16,11 @@ class CoverChordsWindow
   #
   # Returns an array containing the indices of the added chords.
   addChords: (lastBeat) ->
+    @chordsArray = null
     newChords = []
-    while @nextIn < @chords.length and @chords[@nextIn].startBeat <= lastBeat
-      if @chords[@nextIn].player == @sheetIndex
+    while @nextIn < @songChords.length and
+          @songChords[@nextIn].startBeat <= lastBeat
+      if @songChords[@nextIn].player == @sheetIndex
         newChords.push @nextIn
         @_addChord @nextIn
       @nextIn += 1
@@ -27,18 +30,23 @@ class CoverChordsWindow
   #
   # Returns an array containing the indices of the removed chords.
   removeChords: (firstBeat) ->
+    @chordsArray = null
     deadChords = []
     while @nextOut < @outQueue.length and
-          @chords[@outQueue[@nextOut]].endBeat < firstBeat
+          @songChords[@outQueue[@nextOut]].endBeat < firstBeat
       deadChords.push @outQueue[@nextOut]
       @nextOut += 1
     deadChords
+  
+  # Array of chords in the sliding window.
+  chords: ->
+    @chordsArray ||= @outQueue[@nextOut..]
 
-  # Adds a chord 
+  # Adds a chord to the sliding window, without eligibility checks.
   _addChord: (chordIndex) ->
-    endBeat = @chords[chordIndex].endBeat
+    endBeat = @songChords[chordIndex].endBeat
     i = @outQueue.length
-    while i > 0 and @chords[@outQueue[i - 1]].endBeat > endBeat
+    while i > 0 and @songChords[@outQueue[i - 1]].endBeat > endBeat
       @outQueue[i] = @outQueue[i - 1]
       i -= 1
     @outQueue[i] = chordIndex    

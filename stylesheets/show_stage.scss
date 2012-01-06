@@ -42,6 +42,24 @@ article.show-stage {
         > use.playing {
           filter: url("#playing-note");
         }
+        > g.scored-miss {
+          filter: url("#scored-miss");
+        }
+        > g.scored-boo {
+          filter: url("#scored-boo");
+        }
+        > g.scored-ok {
+          filter: url("#scored-ok");
+        }
+        > g.scored-great {
+          filter: url("#scored-great");
+        }
+        > g.scored-perfect {
+          filter: url("#scored-perfect");
+        }
+        > g.scored-flawless {
+          filter: url("#scored-flawless");
+        }
       }
     }
   }

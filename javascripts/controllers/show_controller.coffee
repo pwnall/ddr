@@ -42,7 +42,7 @@ class ShowController
   addPlayer: (player) ->
     cover = @show.addPlayer(player)
     playerView = @view.addedPlayer cover
-    Controls.addListener cover.stageIndex, (event) ->
+    Controls.addListener cover.stageIndex, (event) =>
       note = event.binding.data.note
       noteStarted = event.buttonDown
       cover.playedNote note, noteStarted if @started

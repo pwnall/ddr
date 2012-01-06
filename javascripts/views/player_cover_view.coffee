@@ -11,6 +11,7 @@ class PlayerCoverView
       trackPadding: 20,  # Padding for each vertical "track" for notes.
       beats: 4,  # Number of beats that fit on the sheet.
       beatHeight: 250,  # Height that a note travels during a beat.
+      guideHeight: 0.5  # Height of the guide notes, in beats.
     }
 
     @computeLayout()
@@ -19,6 +20,7 @@ class PlayerCoverView
     
     @chordsWindow = new CoverChordsWindow @cover
     @chordSvgs = {}
+    @lastScoreChange = 0
 
   # Computes the note sheet layout and creates the root SVG element.      
   computeLayout: ->
@@ -42,20 +44,30 @@ class PlayerCoverView
     
   # Draw the static "guide arrows".
   renderGuides: ->
+    guideY = @metrics.guideHeight * @metrics.beatHeight
     @guideNotes = for displayNote, i in @displayNotes
-      @svg.use('#note-' + displayNote.display, @noteX[i], 0, 100, 100).
+      @svg.use('#note-' + displayNote.display, @noteX[i], guideY, 100, 100).
            id("player-#{@cover.stageIndex}-guide-#{i}")
 
   # Updates the view to reflect the change in the show's time.
   #
   # @param {Number} beat the (fractional) beat offset into the song's sheet
-  setSongBeat: (beat) ->
-    deadChords = @chordsWindow.removeChords beat - 1
+  setSongBeat: (@beat) ->
+    @_removeOldChords()
+    @_renderNewChords()
+    @_scrollChords()
+    @_updateChordScores()
+          
+  # Removes the SVG for chords that scrolled off the screen.
+  _removeOldChords: ->
+    deadChords = @chordsWindow.removeChords @beat - 1
     for chord in deadChords
       @chordSvgs[chord].remove()
       delete @chordSvgs[chord]
-    
-    newChords = @chordsWindow.addChords beat + @metrics.beats
+  
+  # Creates SVG for chords that just showed up.
+  _renderNewChords: ->
+    newChords = @chordsWindow.addChords @beat + @metrics.beats
     for chord in newChords
       newSvg = @svg.group()
       for note in @chords[chord].notes
@@ -63,9 +75,12 @@ class PlayerCoverView
         newSvg.use('#note-' + displayNote, @noteX[displayNote], 0, 100, 100)
       @chordSvgs[chord] = newSvg
 
+  # Scrolls the chord SVGs up as the song advances.
+  _scrollChords: ->
     for chord, svg of @chordSvgs
       svg.resetTransform().translate 0,
-          (@chords[chord].startBeat - beat) * @metrics.beatHeight
+          (@chords[chord].startBeat - @beat + @metrics.guideHeight) *
+          @metrics.beatHeight
 
   # Updates the view to reflect a player move.
   #
@@ -73,8 +88,19 @@ class PlayerCoverView
   # @param {Boolean} noteStarted if true, the player started playing the note,
   #                              otherwise the player just stopped playing it
   addPlayedNote: (note, startedNote) ->
+    @_updateChordScores()
+
     svg = @guideNotes[@sheetNotes[note]]
     if startedNote
       svg.addClass 'playing'
     else
       svg.removeClass 'playing'
+
+  # Updates the view to reflect any scoring changes.
+  _updateChordScores: ->
+    while @lastScoreChange < @cover.scoreChanges.length
+      chord = @cover.scoreChanges[@lastScoreChange]
+      score = @cover.scores[chord]
+      @lastScoreChange += 1
+      if @chordSvgs[chord]
+        @chordSvgs[chord].addClass "scored-" + score.id
