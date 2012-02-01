@@ -8,7 +8,7 @@ group :generators do
 end
 
 group :chat do
-  gem 'activesupport', '>= 3.1.0'
+  gem 'activesupport', '>= 3.2.0'
   gem 'i18n'
   gem 'em-mongo', '>= 0.4.2'
   gem 'em-websocket', '>= 0.3.6'
@@ -16,16 +16,16 @@ group :chat do
 end
 
 group :chat_db do
-  gem 'mongo', '>= 1.5.1'
-  gem 'bson_ext', '>= 1.5.1'
+  gem 'mongo', '>= 1.5.2'
+  gem 'bson_ext', '>= 1.5.2'
 end
 
 group :web do
   gem 'sinatra', '>= 1.3.2'
   gem 'shotgun', '>= 0.9'
-  gem 'unicorn', '>= 4.0.0'
+  gem 'unicorn', '>= 4.2.0'
 
-  gem 'coffee-script', '>= 2.2'
-  gem 'sass', '>= 3.1.11'
+  gem 'coffee-script', '>= 2.2.0'
+  gem 'sass', '>= 3.1.12'
   gem 'therubyracer', '>= 0.9.9'
 end

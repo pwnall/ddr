@@ -37,6 +37,42 @@
   },
   {
     "action": "up",
+    "device": "gamepad1",
+    "button": "1",
+    "player": 0
+  },
+  {
+    "action": "down",
+    "device": "gamepad1",
+    "button": "2",
+    "player": 0
+  },
+  {
+    "action": "left",
+    "device": "gamepad1",
+    "button": "3",
+    "player": 0
+  },
+  {
+    "action": "right",
+    "device": "gamepad1",
+    "button": "4",
+    "player": 0
+  },
+  {
+    "action": "start",
+    "device": "gamepad1",
+    "button": "10",
+    "player": null
+  },
+  {
+    "action": "pause",
+    "device": "gamepad1",
+    "button": "9",
+    "player": null
+  },
+  {
+    "action": "up",
     "device": "keyboard",
     "button": "I",
     "player": 1

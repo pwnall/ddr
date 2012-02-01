@@ -21,6 +21,10 @@ class GamepadInput
                             ((event) => @_onConnect event), false
     window.addEventListener 'MozGamepadDisconnected',
                             ((event) => @_onDisconnect event), false
+    window.addEventListener 'webkitGamepadConnected',
+                            ((event) => @_onConnect event), false
+    window.addEventListener 'webkitGamepadDisconnected',
+                            ((event) => @_onDisconnect event), false
 
   # Called when a game pad is connected to the computer. 
   _onConnect: (event) ->

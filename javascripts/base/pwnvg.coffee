@@ -23,7 +23,7 @@ class PwnvgElement
   #
   # @return the element to facilitate method chaining
   removeClass: (klass) ->
-    list = @dom.getAttribute 'class'
+    return unless list = @dom.getAttribute 'class'
     @dom.setAttribute 'class',
         list.replace(new RegExp('(^|\\s)' + klass + '(\\s|$)'), ' ').trim()
     @

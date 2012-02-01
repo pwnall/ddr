@@ -18,7 +18,6 @@ class RedrawInput
     throw new Error "No event sink set" unless @sink
 
     @started = true
-    # HACK(pwnall): should use @raf
     @raf.call window, @handler
     
   # Stops dispatching redraw events to the sink, unhooks from them asap.
